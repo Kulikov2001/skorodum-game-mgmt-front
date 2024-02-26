@@ -6,20 +6,36 @@ const router = createRouter({
             path: '/',
             name: 'home',
             component: () => import('@/layouts/MainLayout.vue'),
-            meta: { title: 'Скородум' },
+            meta: { title: 'Скородум',transition: 'slide-left'},
             children: [
                 {
                     path: '/new',
                     name: 'Новая игра',
+                    meta: { title: 'Скородум',transition: 'slide-left'},
                     component: () => import('@/pages/NewPage.vue')
                 },
                 {
                     path: '/new/round',
                     name: 'Новый раунд',
-                    component: () => import('@/pages/NewRound.vue')
+                    meta: { title: 'Скородум',transition: 'slide-left'},
+                    component: () => import('@/pages/NewRoundPage.vue')
                 },
                 {
-                    path: '/all',
+                    path: '/bank',
+                    name: 'Новый раунд',
+                    meta: { title: 'Скородум',transition: 'slide-left'},
+                    component: () => import('@/pages/BankPage.vue')
+                },
+            ]
+        },
+        {
+            path: '/all',
+            name: 'Все игры',
+            component: () => import('@/layouts/MainLayout.vue'),
+            meta: { title: 'Скородум',transition: 'slide-left'},
+            children: [
+                {
+                    path: '',
                     name: 'Все игры',
                     component: () => import('@/pages/AllPage.vue')
                 }
@@ -27,17 +43,31 @@ const router = createRouter({
         },
         {
             path: '/bank',
-            name: 'Банк вопросов',
+            name: 'Банк',
             component: () => import('@/layouts/MainLayout.vue'),
+            meta: { title: 'Скородум',transition: 'slide-left'},
             children: [
                 {
-                    path: '',
+                    path: '/bank',
                     name: 'Банк',
                     component: () => import('@/pages/BankPage.vue')
                 }
             ]
+        },
+        {
+            path: '/bank/settigns',
+            name: 'Банк вопросов',
+            component: () => import('@/layouts/MainLayout.vue'),
+            meta: { title: 'Скородум',transition: 'slide-left'},
+            children: [
+                {
+                    path: '/bank/settings',
+                    name: 'Банк',
+                    component: () => import('@/pages/CategorySettingsPage.vue')
+                }
+            ]
         }
     ]
-})
+});
 
 export default router

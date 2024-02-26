@@ -15,9 +15,10 @@ const props = defineProps<{
 .grid {
     display: grid;
     grid-template-columns: 1fr 3fr 1fr;
+    grid-auto-rows: 100px;
 }
-.back{
-    cursor:pointer;
+.back {
+    cursor: pointer;
 }
 .center {
     text-align: center;

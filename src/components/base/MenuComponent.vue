@@ -1,8 +1,8 @@
 <template>
     <div class="menu__wrapper">
-        <BtnNew class="mainBtn-item" @click="newPage" />
-        <BtnAll class="mainBtn-item" @click="allPage" />
-        <BtnBank class="mainBtn-item" @click="bankPage" />
+        <BtnNew :class="{'active' : isOn('/new')}" class="mainBtn-item" @click="newPage" />
+        <BtnAll :class="{'active' : isOn('/all')}" class="mainBtn-item" @click="allPage" />
+        <BtnBank :class="{'active' : isOn('/bank')}" class="mainBtn-item" @click="bankPage" />
     </div>
 </template>
 <script setup lang="ts">
@@ -13,8 +13,6 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const newPage = async () => {
-    {
-    }
     router.push({ path: '/new' })
 }
 const allPage = async () => {
@@ -23,8 +21,14 @@ const allPage = async () => {
 const bankPage = async () => {
     router.push({ path: '/bank' })
 }
+function isOn(_page: string): boolean{
+    return router.currentRoute.value.path === _page;
+}
 </script>
 <style scoped>
+.active{
+    filter: grayscale(1);
+}
 .menu__wrapper {
     display: inline-flex;
     justify-content: center;

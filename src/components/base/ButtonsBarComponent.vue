@@ -3,29 +3,29 @@
         <div class="left">
             <button v-if="props.back" class="back">&larr; Назад</button>
             <button v-if="props.save" class="save">Сохранить</button>
-            <button v-if="props.reset" class="back">
+            <button v-if="props.reset" class="reset">
                 <img src="" alt="" />Сброс к изначальным настройка
             </button>
+            <button v-if="props.add" class="add">Добавить</button>
+            <button v-if="props.cancel" class="cancel">Отмена</button>
         </div>
-        <div class="right">
-            
-        </div>
+        <div class="right"></div>
     </div>
 </template>
 <script setup lang="ts">
 const props = defineProps<{
-    back?: boolean,
-    save?: boolean,
-    reset?: boolean,
-    toAll?: boolean,
-    add?: boolean,
-    cancel?: boolean,
-    saveAndShow?: boolean,
-    edit?: boolean,
-    delete?: boolean,
-    download?: boolean,
-    share?: boolean,
-}>();
+    back?: boolean
+    save?: boolean
+    reset?: boolean
+    toAll?: boolean
+    add?: boolean
+    cancel?: boolean
+    saveAndShow?: boolean
+    edit?: boolean
+    delete?: boolean
+    download?: boolean
+    share?: boolean
+}>()
 </script>
 <style scoped>
 button {
@@ -57,5 +57,19 @@ button {
     text-align: right;
     flex-grow: 1;
     /* background-color: blueviolet; */
+}
+.add {
+    border: 1px solid var(--success);
+    color: var(--success);
+    border-radius: 0.5em;
+    padding: 1rem 2rem;
+    background: white;
+}
+.cancel {
+    background: white;
+    border: 1px solid red;
+    color: red;
+    border-radius: 0.5em;
+    padding: 1rem 2rem;
 }
 </style>

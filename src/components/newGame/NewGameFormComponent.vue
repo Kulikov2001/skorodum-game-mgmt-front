@@ -2,7 +2,7 @@
     <div class="form__wrapper">
         <div class="form__game">
             <div class="row">
-                <div class="field">
+                <div class="field game-name">
                     <div class="field-elem">
                         <input
                             style="padding-left: 0"
@@ -12,7 +12,7 @@
                         />
                     </div>
                 </div>
-                <div class="field">
+                <div class="field zakaz">
                     <div class="field-elem" style="border-left: 2px solid var(--text-darker)">
                         <label for="zakazchik">Заказчик: </label>
                     </div>
@@ -25,7 +25,7 @@
                         />
                     </div>
                 </div>
-                <div class="field">
+                <div class="field date">
                     <div class="field-elem">
                         <label for="game-date">Дата: </label>
                     </div>
@@ -41,30 +41,54 @@
                 </div>
             </div>
         </div>
-        <div class="row">
+        <div class="row btns">
             <div class="field">
-                <vs-switch id="isPlayersName" />
+                <MySwitch :val="'playersName'" class="my-switch" v-model="isPlayersName" />
                 <label for="isPlayersName">Имена членов команд</label>
             </div>
             <div class="field">
-                <vs-switch id="isPlayersEmail" />
+                <MySwitch :val="'playersEmail'" class="my-switch" v-model="isPlayersEmail"/>
                 <label for="isPlayersEmail">E-mail членов команд</label>
             </div>
             <div class="field">
-                <vs-switch id="isTableNumber" />
+                <MySwitch :val="'tableNumber'" class="my-switch" v-model="isTableNumber"/>
                 <label for="isTableNumber">Номер стола</label>
             </div>
         </div>
     </div>
 </template>
-<style>
+<script setup lang="ts">
+import { ref } from 'vue'
+import MySwitch from '@/assets/MySwitch.vue'
+const isPlayersName = ref(true)
+const isPlayersEmail = ref(false)
+const isTableNumber = ref(true)
+</script>
+<style scoped>
 .form__wrapper {
     margin-top: 2em;
     padding: 0 2em 2em 2em;
     border: 2px solid var(--text-darker);
     border-radius: 1.5em;
 }
-
+.btns .field{
+    display: inline-flex;
+    margin: .5em;
+    align-items: center;
+}
+.btns .field label{
+    margin: .5em;
+}
+.field.game-name{
+    flex-grow: 1;
+    border-bottom: 2px solid var(--text-darker);
+}
+.field.zakaz{
+    border-bottom: 2px solid var(--text-darker);
+}
+.field.date{
+    border-bottom: 2px solid var(--text-darker);
+}
 .field-elem > input {
     border: 0;
 }
@@ -76,11 +100,11 @@
     flex-direction: column;
 }
 .field,
-.vs-switch,
+.my-switch,
 label {
     vertical-align: center;
 }
-.vs-switch {
+.my-switch {
     display: inline;
 }
 @media screen and (min-width: 900px) {
@@ -92,7 +116,6 @@ label {
         display: inline-block;
         max-height: 4em;
         min-height: 4em;
-        border-bottom: 2px solid var(--text-darker);
     }
 }
 </style>

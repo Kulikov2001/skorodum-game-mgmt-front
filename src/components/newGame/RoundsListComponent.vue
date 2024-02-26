@@ -6,7 +6,7 @@
         >
     </div>
 </template>
-<style>
+<style scoped>
 .roundsList__wrapper {
     border-radius: 2em;
     border: 2px solid var(--text-darker);

@@ -5,6 +5,8 @@
     --background: #f8f9fb;
     --text-grey: #d7d7d7;
     --text-darker: #949cb1;
+    --bg-darker: #e1e6f0;
+    --checkbox-grey: #b4b4b4;
     --vt-c-white: #f8f9fb;
     --vt-c-white-soft: #f8f8f8;
     --vt-c-white-mute: #f2f2f2;
@@ -42,7 +44,7 @@
     --section-gap: 160px;
 }
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
     :root {
         --color-underlay: var(--dark-purple);
         --color-background: var(--vt-c-black);
@@ -55,7 +57,7 @@
         --color-heading: var(--vt-c-text-dark-1);
         --color-text: var(--vt-c-text-dark-2);
     }
-}
+} */
 
 *,
 *::before,

@@ -2,13 +2,24 @@
     <div class="round__wrapper">
         <div class="form">
             <div class="row">
-                <input type="text" placeholder="НАЗВАНИЕ ИЛИ НОМЕР РАУНДА" />
+                <div class="subrow">
+                    <InputComponent
+                        style="
+                            border-radius: 0;
+                            border: 0;
+                            border-bottom: 1px solid var(--text-darker);
+                            width: 90%;
+                            margin: 0 auto;
+                        "
+                        v-model="roundName"
+                        placeholder="Название или номер раунда"
+                    />
+                    <div class="radio__wrapper">
+                        <RadioGroup :data="{ ...radiobtns }" v-model="roundType" />
+                    </div>
+                </div>
             </div>
-            <div class="row">
-                <vs-radio val="default"> Обычный раунд — идёт в зачёт </vs-radio>
-                <vs-radio val="test"> Пробный раунд — вне в зачёта </vs-radio>
-                <vs-radio val="blitz"> Блиц </vs-radio>
-            </div>
+            <div class="row"></div>
         </div>
         <div class="features">
             <FeatureComponent
@@ -27,14 +38,49 @@
 </template>
 
 <style scoped>
+.radio__wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    margin: 1em 2em;
+}
+:deep(.myradio) {
+    margin-left: 2em;
+    margin-right: 2em;
+}
 .round__wrapper {
     background-color: var(--background);
     padding: 2em;
 }
+.subrow {
+    border: 1px solid var(--text-darker);
+    border-radius: 1em;
+    background: white;
+}
 </style>
-
 <script setup lang="ts">
+import RadioGroup from '@/components/base/RadioGroup.vue'
 import FeatureComponent from '@/components/newRound/FeatureComponent.vue'
+import InputComponent from '@/components/base/InputComponent.vue'
+import { ref } from 'vue'
+
+const roundName = ref('')
+const radiobtns = [
+    {
+        val: 'default',
+        label: 'Обычный раунд — идёт в зачёт'
+    },
+    {
+        val: 'test',
+        label: 'Пробный раунд — вне в зачёта'
+    },
+    {
+        val: 'blitz',
+        label: 'Блиц'
+    }
+]
+const roundType = ref(radiobtns[0])
 const allFeatures = [
     {
         title: 'Убрать неверный ответ',
