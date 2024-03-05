@@ -93,4 +93,12 @@ h2 {
 .vs-switch--circle {
     min-height: 50px !important;
 }
+@media screen and (max-width: 500px) {
+    .checkboxes__wrapper{
+        margin-top: 1em;
+    }
+    :deep(.checkbox__wrapper){
+        margin: 0.75em;
+    }
+}
 </style>

@@ -1,20 +1,12 @@
 <template>
-    <input v-model="modelValue" @click="handleCheckboxClick" :checked="isChecked" type="checkbox" id="switch" /><label for="switch"></label>
+    <input v-model="modelValue" :checked="modelValue.value" type="checkbox" /><label @click="handleClick"></label>
 </template>
 
 <script setup lang="ts">
-import { ref,watch} from 'vue'
-const isChecked = ref(false)
 const modelValue = defineModel();
-const handleCheckboxClick = () => {
-    if (modelValue.value){
-        modelValue.value = false;
-        isChecked.value = false;
-    } else {
-        modelValue.value = true;
-        isChecked.value = true;
-    }
-     
+
+const handleClick = () =>{
+    modelValue.value = !modelValue.value;
 }
 </script>
 
@@ -61,7 +53,7 @@ input:checked + label:after {
 }
 
 label:active:after {
-    width: 130px;
+    width: 50px;
 }
 
 // centering

@@ -2,7 +2,7 @@
     <div class="item__wrapper">
         <h2 @click="emitTitleClick">
             <span v-if="props.isOpen"><MarkIcon /></span>
-            <span v-else><PlusIcon /></span>
+            <span v-else><PlusIcon2 width="24" height="24" /></span>
             {{ props.title }}
         </h2>
         <slot />
@@ -11,7 +11,7 @@
 <script setup lang="ts">
 import { defineProps, defineEmits } from 'vue'
 import MarkIcon from '@/assets/MarkIcon.vue'
-import PlusIcon from '@/assets/PlusIcon.vue'
+import PlusIcon2 from '@/assets/PlusIcon2.vue'
 const props = defineProps<{
     title: string
     isOpen: boolean

@@ -18,8 +18,8 @@
 <script setup lang="ts">
 import { defineProps } from 'vue'
 const props = defineProps<{
-    title: string
-    variations: string[]
+    title: string,
+    variations: string[],
     correct: number | string
 }>()
 </script>
@@ -63,5 +63,13 @@ li:before {
     color: black;
     font-weight: 700;
     margin: auto 0.5em;
+}
+@media screen and (max-width: 500px) {
+    ol{
+        margin-left:0;
+    }
+    li:before{
+        margin: 0 0.5em 0 0;
+    }
 }
 </style>

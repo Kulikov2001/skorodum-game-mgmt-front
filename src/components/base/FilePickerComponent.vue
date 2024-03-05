@@ -16,7 +16,8 @@
             <div class="item">
                 <img class="ico" src="" alt="" />
                 <div class="meta">
-                    <h4>File title info.mp4</h4>
+                    <MediaPic width="56" style="float: left; margin-right: 1em; vertical-align: text-top;"/>
+                    <h4 >{{ beforeFile }}</h4>
                     <div class="size">999KB</div>
                 </div>
                 <img src="" class="delete" alt="" />
@@ -26,13 +27,33 @@
 </template>
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import axios from 'axios'
-
-const fileInput = ref(null)
-const selectedFile = ref(null)
-const uploadSuccess = ref(false)
+import axios from 'axios';
+import MediaPic from '@/assets/MediaPic.vue';
+import type {IMedia} from '@/stores/game';
+const qmedia: IMedia = {
+    id: 1,
+    show_image: true,
+    video:{
+        before: 'mybeforevide.mp4',
+        after: 'myaftervideo.mp4'
+    },
+    image:{
+        before: '',
+        after: '',
+        player_displayed: false
+    }
+}
+const fileInput = ref(null);
+const selectedFile = ref(null);
+const uploadSuccess = ref(false);
 const uploadedFile = ref('')
 
+const beforeFile = computed(()=>{
+    return qmedia.video.before ?? 'Нет файла';
+});
+const afterFile = computed(()=>{
+    return qmedia.image.after ?? qmedia.video.after ?? 'kk';
+});
 const handleFileChange = () => {
     selectedFile.value = fileInput.value.files[0]
 }

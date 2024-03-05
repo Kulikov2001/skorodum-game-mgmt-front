@@ -170,4 +170,11 @@ ul{
     flex-direction: row;
     flex-wrap: wrap;
 }
+@media screen and (max-width:500px) {
+    .options__bar{
+        flex-direction: column;
+        width: 80%;
+        margin: 0 auto;
+    }
+}
 </style>

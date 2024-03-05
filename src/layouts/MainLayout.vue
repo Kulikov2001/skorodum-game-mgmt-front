@@ -1,5 +1,5 @@
 <template>
-    <div class="main__wrapper">
+    <div class="main__wrapper" :class="[$route.path === '/bank' ? 'bank' : '']">
         <LogoComponent />
         <MenuComponent />
         <main>
@@ -26,7 +26,7 @@ watch(
                 break
             case '/new':
                 break
-            case '/all':
+            case '/games':
                 break
         }
     }
@@ -52,5 +52,14 @@ main {
 .slide-fade-leave-to {
   transform: translateX(20px);
   opacity: 0;
+}
+
+</style>
+
+<style v-if="$route.path === '/bank'">
+@media screen and (max-width: 600px){
+    .main__wrapper.bank{
+        padding:0 !important;
+    }
 }
 </style>

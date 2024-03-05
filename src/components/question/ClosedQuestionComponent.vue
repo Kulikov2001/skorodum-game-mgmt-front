@@ -1,7 +1,9 @@
 <template>
     <QuestionFormComponent />
     <CategoryFormComponent />
-    <vs-button>Добавить категорию</vs-button>
+    <div style="width: 100%; text-align: center;">
+    <vs-button color="var(--main)" style="text-align: center; margin: 1em auto;">Добавить категорию</vs-button>
+</div>
     <ButtonsBarComponent :add="true" :cancel="true" />
 </template>
 
@@ -11,4 +13,6 @@ import QuestionFormComponent from '@/components/question/QuestionFormComponent.v
 import CategoryFormComponent from '@/components/question/CategoryFormComponent.vue'
 </script>
 
-<style scoped></style>
+<style scoped>
+
+</style>

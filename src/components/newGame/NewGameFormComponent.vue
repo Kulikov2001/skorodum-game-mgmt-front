@@ -43,15 +43,15 @@
         </div>
         <div class="row btns">
             <div class="field">
-                <MySwitch :val="'playersName'" class="my-switch" v-model="isPlayersName" />
+                <MySwitch v-model="isPlayersName"/>
                 <label for="isPlayersName">Имена членов команд</label>
             </div>
             <div class="field">
-                <MySwitch :val="'playersEmail'" class="my-switch" v-model="isPlayersEmail"/>
+                <MySwitch v-model="isPlayersEmail"/>
                 <label for="isPlayersEmail">E-mail членов команд</label>
             </div>
             <div class="field">
-                <MySwitch :val="'tableNumber'" class="my-switch" v-model="isTableNumber"/>
+                <MySwitch v-model="isTableNumber"/>
                 <label for="isTableNumber">Номер стола</label>
             </div>
         </div>
@@ -60,9 +60,13 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import MySwitch from '@/assets/MySwitch.vue'
-const isPlayersName = ref(true)
-const isPlayersEmail = ref(false)
-const isTableNumber = ref(true)
+import {useGameStore} from '@/stores/game.ts';
+const gameStore = useGameStore();
+const isPlayersName = ref(false);
+const isPlayersEmail = ref(false);
+const isTableNumber = ref(false);
+
+
 </script>
 <style scoped>
 .form__wrapper {
@@ -116,6 +120,24 @@ label {
         display: inline-block;
         max-height: 4em;
         min-height: 4em;
+    }
+}
+@media screen and (max-width: 500px) {
+    .form__wrapper{
+        .zakaz, .date, .game-name{
+            padding: 1em;
+            border-bottom: 1px solid var(--text-darker);
+        }
+        .field-elem{
+            border: 0 !important;
+        }
+        .field.zakaz{
+            display: grid;
+            grid-template-columns: 2fr 10fr;
+            label{
+                margin-right: 1em;
+            }
+        }
     }
 }
 </style>

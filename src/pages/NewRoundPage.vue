@@ -3,7 +3,7 @@
         <TitleBarComponent :title="'Новый раунд'" :back="['Вернуться к игре', '/new']" />
         <NewRoundFormComponent />
         <AccordionItem
-            :isOpen="showCreateQuestion"
+            :isOpen="true"
             @titleClick="toggleAccordion"
             :title="'Создать вопрос'"
         >
