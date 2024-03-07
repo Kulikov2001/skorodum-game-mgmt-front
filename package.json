@@ -2,22 +2,22 @@
   "name": "skorodum-game-mgmt-front",
   "version": "0.0.0",
   "private": true,
-  "type": "module",
   "scripts": {
-    "dev": "vite",
-    "net": "vite --host 192.168.28.218",
     "build": "run-p type-check \"build-only {@}\" --",
-    "preview": "vite preview",
     "test:unit": "vitest",
     "test:e2e": "playwright test",
-    "build-only": "vite build",
-    "type-check": "vue-tsc --build --force",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
-    "format": "prettier --write src/"
+    "build-only": "vite build",
+    "dev": "vite",
+    "format": "prettier --write src/",
+    "net": "vite --host 192.168.28.218",
+    "preview": "vite preview",
+    "type-check": "vue-tsc --build --force"
   },
   "dependencies": {
     "axios": "^1.6.7",
     "pinia": "^2.1.7",
+    "register-service-worker": "^1.7.2",
     "vue": "^3.3.11",
     "vue-router": "^4.2.5",
     "vuesax": "^4.0.1-alpha.25",
@@ -32,6 +32,7 @@
     "@typescript-eslint/eslint-plugin": "^6.18.1",
     "@vitejs/plugin-vue": "^4.5.2",
     "@vitejs/plugin-vue-jsx": "^3.1.0",
+    "@vue/cli-plugin-pwa": "~5.0.0",
     "@vue/eslint-config-prettier": "^8.0.0",
     "@vue/eslint-config-typescript": "^12.0.0",
     "@vue/test-utils": "^2.4.3",
@@ -50,5 +51,6 @@
     "vite": "^5.0.10",
     "vitest": "^1.0.4",
     "vue-tsc": "^1.8.25"
-  }
+  },
+  "type": "module"
 }
