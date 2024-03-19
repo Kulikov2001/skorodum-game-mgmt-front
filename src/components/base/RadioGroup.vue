@@ -16,7 +16,7 @@
 import { ref, computed, onMounted } from 'vue'
 import MyRadio from '@/components/base/MyRadio.vue'
 const props = defineProps<{
-    data: object[]
+    data: any[]
 }>()
 const modelValue = defineModel()
 const provideCheck = (selected: any) => {

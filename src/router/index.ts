@@ -6,12 +6,12 @@ const router = createRouter({
             path: '/',
             name: 'home',
             component: () => import('@/layouts/MainLayout.vue'),
-            meta: { title: 'Скородум',transition: 'slide-left'},
+            meta: { title: 'Скородум', transition: 'slide-left' },
             children: [
                 {
                     path: '/new',
                     name: 'Новая игра',
-                    meta: { title: 'Скородум',transition: 'slide-left'},
+                    meta: { title: 'Скородум', transition: 'slide-left' },
                     component: () => import('@/pages/NewPage.vue')
                 }
             ]
@@ -20,12 +20,12 @@ const router = createRouter({
             path: '/new/round',
             name: 'Новый раунд',
             component: () => import('@/layouts/MainLayout.vue'),
-            meta: { title: 'Скородум'},
+            meta: { title: 'Скородум' },
             children: [
                 {
                     path: '/new/round',
                     name: 'Новый раунд',
-                    meta: { title: 'Скородум',transition: 'slide-left'},
+                    meta: { title: 'Скородум', transition: 'slide-left' },
                     component: () => import('@/pages/NewRoundPage.vue')
                 }
             ]
@@ -34,7 +34,7 @@ const router = createRouter({
             path: '/games',
             name: 'Все игры',
             component: () => import('@/layouts/MainLayout.vue'),
-            meta: { title: 'Скородум'},
+            meta: { title: 'Скородум' },
             children: [
                 {
                     path: '',
@@ -46,14 +46,14 @@ const router = createRouter({
                     name: 'Конкретная игра',
                     component: () => import('@/pages/CurrentGamePage.vue'),
                     props: true
-                },
+                }
             ]
         },
         {
             path: '/game/',
             name: 'Раунд',
             component: () => import('@/layouts/MainLayout.vue'),
-            meta: { title: 'Раунд'},
+            meta: { title: 'Раунд' },
             children: [
                 {
                     path: '/bank/settings',
@@ -66,7 +66,7 @@ const router = createRouter({
             path: '/bank',
             name: 'Банк',
             component: () => import('@/layouts/MainLayout.vue'),
-            meta: { title: 'Банк'},
+            meta: { title: 'Банк' },
             children: [
                 {
                     path: '',
@@ -79,8 +79,8 @@ const router = createRouter({
                     component: () => import('@/pages/CategorySettingsPage.vue')
                 }
             ]
-        },
+        }
     ]
-});
+})
 
 export default router

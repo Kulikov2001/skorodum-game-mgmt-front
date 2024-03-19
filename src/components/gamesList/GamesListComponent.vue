@@ -1,4 +1,5 @@
 <template>
+    <NotificationComponent v-model="store.globalNotification" />
     <div class="wrapper">
         <ol class="list">
             <li v-for="(item, key) in store.allGames" :key="key" class="list__item">
@@ -9,9 +10,15 @@
                         <span v-if="item.isDraft" class="draft">черновик</span>
                     </div>
                     <div class="btns__wrapper">
-                        <span @click="handleDownloadBtn(item.id)" class="btn download"><DownloadBtn width="19" /></span>
-                        <span @click="handleDeleteBtn(item.id)" class="btn delete"><DeleteBtn width="18" /></span>
-                        <span @click="handleShareBtn(item.id)" class="btn share"><ShareBtn width="16" /></span>
+                        <span @click="handleDownloadBtn(item.id)" class="btn download"
+                            ><DownloadBtn width="19"
+                        /></span>
+                        <span @click="handleDeleteBtn(item.id)" class="btn delete"
+                            ><DeleteBtn width="18"
+                        /></span>
+                        <span @click="handleShareBtn(item.id)" class="btn share"
+                            ><ShareBtn width="16"
+                        /></span>
                     </div>
                 </div>
             </li>
@@ -23,33 +30,33 @@
 import DownloadBtn from '@/assets/DownloadBtn.vue'
 import DeleteBtn from '@/assets/DeleteBtn.vue'
 import ShareBtn from '@/assets/ShareBtn.vue'
-import {useGameStore, BIGame} from '@/stores/game';
-import {onMounted} from 'vue'
-import { useRouter } from 'vue-router';
-const store = useGameStore();
-const router = useRouter();
+import { useGameStore } from '@/stores/game'
+import { onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import NotificationComponent from '@/components/base/NotificationComponent.vue'
+const store: any = useGameStore()
+const router = useRouter()
 
-onMounted(()=>{
-    store.getGamesNames();
+onMounted(() => {
+    store.getGamesNames()
 })
 
-const handleDownloadBtn = async(_id: number) => {
-    store.downloadGame(_id);
+const handleDownloadBtn = async (_id: number) => {
+    store.downloadGame(_id)
 }
-const handleDeleteBtn = async(_id: number) => {
-    await store.deleteGame(_id);
-    await store.getGamesNames();
+const handleDeleteBtn = async (_id: number) => {
+    await store.deleteGame(_id)
+    await store.getGamesNames()
 }
-const handleShareBtn = async(_id: number) => {
-    alert('Действие зарезервировано');
+const handleShareBtn = async (_id: number) => {
+    alert('Действие зарезервировано')
 }
-const handleRowClick = async(_id: number) =>{
-    router.push('/games/'+_id+'/');
+const handleRowClick = async (_id: number) => {
+    router.push('/games/' + _id + '/')
 }
 </script>
 
 <style scoped>
-
 .list__wrapper {
     display: flex;
     flex-direction: row;
@@ -73,17 +80,18 @@ const handleRowClick = async(_id: number) =>{
     background: #f8f9fb;
 }
 @media screen and(min-width:500px) {
-    .btns__wrapper{
+    .btns__wrapper {
         display: grid;
         grid-template-columns: repeat(1fr);
     }
-    .btn{
+    .btn {
         padding: 0 !important;
     }
-    :deep(main){
+    :deep(main) {
         width: 100%;
     }
-    .list__wrapper, .list__item{
+    .list__wrapper,
+    .list__item {
         margin-right: 0;
     }
 }

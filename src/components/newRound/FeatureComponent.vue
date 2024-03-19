@@ -1,7 +1,7 @@
 <template>
     <div class="wrapper">
         <div v-if="props.ico === 'time'" class="icon">
-            <TimeIco />
+            <TimeIco width="50" height="50" viewbox="0 0 50 50" />
         </div>
         <h2>&laquo;{{ props.title }}&raquo;</h2>
         <div class="increaser-container">
@@ -13,17 +13,21 @@
     </div>
 </template>
 <style scoped>
-*{
+* {
     user-select: none;
 }
 .wrapper {
     display: inline-block;
+    vertical-align: middle;
     color: var(--text-darker);
     padding: 2em;
     text-align: center;
     background-color: white;
     margin: 1em;
     border-radius: 1em;
+    width: 30%;
+    max-heigth: 250px;
+    min-width: 250px;
 }
 h2 {
     text-align: center;
@@ -51,27 +55,26 @@ h2 {
 }
 </style>
 <script setup lang="ts">
-import {onMounted, ref} from 'vue'
-import TimeIco from '@/assets/TimeIco.vue';
+import { onMounted, ref } from 'vue'
+import TimeIco from '@/assets/TimeIco.vue'
 const props = defineProps<{
     title: string
     max: number
     min: number
     default: number
-    desc: string
+    desc?: string
     ico?: any
     increase: number
-}>();
+}>()
 //const featureVal = ref(props.default);
-const featureVal = defineModel({default: 0});
-onMounted(()=>{
-    featureVal.value = props.default;
+const featureVal = defineModel({ default: 0 })
+onMounted(() => {
+    featureVal.value = props.default
 })
-const feaMinus = async() =>{
-    ((featureVal.value - props.increase) >= props.min) ? featureVal.value -= props.increase : 0;
+const feaMinus = async () => {
+    featureVal.value - props.increase >= props.min ? (featureVal.value -= props.increase) : 0
 }
-const feaPlus = async() =>{
-    ((featureVal.value + props.increase) <= props.max) ? featureVal.value += props.increase : 0;
+const feaPlus = async () => {
+    featureVal.value + props.increase <= props.max ? (featureVal.value += props.increase) : 0
 }
-
 </script>

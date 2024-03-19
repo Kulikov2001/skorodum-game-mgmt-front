@@ -1,27 +1,28 @@
 <template>
     <div class="row">
         <div class="left">
-            <button v-if="props.back" class="back">&larr; Назад</button>
-            <button v-if="props.save" class="save">Сохранить</button>
-            <button v-if="props.reset" class="reset">
+            <button v-if="props.back" @click="emit('Back')" class="back">&larr; Назад</button>
+            <button v-if="props.save" @click="emit('Save')" class="save">Сохранить</button>
+            <button v-if="props.reset" @click="emit('Reset')" class="reset">
                 <ResetIco width="18" height="18" /> Сброс к изначальным настройка
             </button>
-            <button v-if="props.add" class="add">Добавить</button>
-            <button v-if="props.cancel" class="cancel">Отмена</button>
-            
+            <button v-if="props.add" @click="emit('Add')" class="add">Добавить</button>
+            <button v-if="props.cancel" @click="emit('Cancel')" class="cancel">Отмена</button>
         </div>
         <div class="right">
-            <div v-if="props.toAll" class="to-all" style="display: inline-flex; margin: 1em;">
-            <span style="margin-right: 1em;word-wrap: break-word;">Применить параметры к остальным раундам</span>
-            <MySwitch v-model="saveForAll" />
-        </div>
+            <div v-if="props.toAll" class="to-all" style="display: inline-flex; margin: 1em">
+                <span style="margin-right: 1em; word-wrap: break-word"
+                    >Применить параметры к остальным раундам</span
+                >
+                <MySwitch v-model="saveForAll" />
+            </div>
         </div>
     </div>
 </template>
 <script setup lang="ts">
-import {ref} from 'vue'
-import MySwitch from '@/assets/MySwitch.vue';
-import ResetIco from '@/assets/ResetIco.vue';
+import { ref } from 'vue'
+import MySwitch from '@/assets/MySwitch.vue'
+import ResetIco from '@/assets/ResetIco.vue'
 const props = defineProps<{
     back?: boolean
     save?: boolean
@@ -34,30 +35,50 @@ const props = defineProps<{
     delete?: boolean
     download?: boolean
     share?: boolean
-}>();
-const saveForAll = ref(false);
+}>()
+const emit = defineEmits<{
+    (e: 'Back'): void
+    (e: 'Save'): void
+    (e: 'Reset'): void
+    (e: 'ToAll'): void
+    (e: 'Add'): void
+    (e: 'Cancel'): void
+    (e: 'SaveAndShow'): void
+    (e: 'Edit'): void
+    (e: 'Delete'): void
+    (e: 'Download'): void
+    (e: 'Share'): void
+}>()
+const saveForAll = ref(false)
 </script>
 <style scoped>
+.row {
+    margin-top: 1.5em;
+}
 button {
     cursor: pointer;
-    margin: 1em;
+    margin: auto 1em;
     border: none;
     outline: none;
     background: transparent;
-    border-radius: 0.75em;
-    padding: 0.7em 1em;
+    border-radius: 0.5em;
+    padding: 1em 2em;
     font-size: 1.2em;
 }
-button:first-child{
+button:first-child {
     margin-left: 0;
 }
-button:last-child{
+button:last-child {
     margin-right: 0;
 }
+button:nth-child(even) {
+    margin-left: 0;
+}
 .back {
-    color: var(--text-darker);
-    border: 1.75px solid var(--text-darker);
+    color: #566bac;
+    border: 1.75px solid #566bac;
     border-radius: 0.75em;
+    padding: 1em 2.8em 1em 2em;
 }
 .save {
     color: var(--success);
@@ -90,7 +111,7 @@ button:last-child{
     border-radius: 0.5em;
     padding: 1rem 2rem;
 }
-.reset{
+.reset {
     border: 1.75px solid var(--text-darker);
     border-radius: 0.75em;
 }

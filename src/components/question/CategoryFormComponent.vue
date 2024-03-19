@@ -1,11 +1,16 @@
 <template>
     <div class="category__wrapper">
         <h2>Категории</h2>
-        <SearchFieldComponent />
+        <SearchFieldComponent @userinput="handleChange" v-model="searchText" />
+
         <div class="checkboxes__wrapper">
-            <MySwitchComponent v-for="category in mockcategory" :key="category.id">
-                {{ category.title }}</MySwitchComponent
+            <MySwitchComponent
+                v-for="category in searchResult"
+                @click="handleCategoryClick(category)"
+                :key="category.id"
+                :class="{'active':  categoryFormModel.selected.some(item => item.name === category.name)  }"
             >
+                {{ category.name }}</MySwitchComponent>
         </div>
     </div>
 </template>
@@ -13,60 +18,61 @@
 <script setup lang="ts">
 import SearchFieldComponent from '@/components/base/SearchFieldComponent.vue'
 import MySwitchComponent from '@/components/base/MySwitchComponent.vue'
-import { ref } from 'vue'
-const myswitch = ref(true)
-const mockcategory = [
-    {
-        id: 1,
-        title: 'Авиация',
-        val: 'avia'
-    },
-    {
-        id: 2,
-        title: 'География',
-        val: 'avia'
-    },
-    {
-        id: 3232,
-        title: 'Кораблестроение, мореплавание',
-        val: 'avia'
-    },
-    {
-        id: 1123,
-        title: 'Космос',
-        val: 'avia'
-    },
-    {
-        id: 14,
-        title: 'Личности',
-        val: 'avia'
-    },
-    {
-        id: 10,
-        title: 'Любопытный факт',
-        val: 'avia'
-    },
-    {
-        id: 222,
-        title: 'Грамматика',
-        val: 'avia'
-    },
-    {
-        id: 322,
-        title: 'Искусство',
-        val: 'avia'
-    },
-    {
-        id: 43,
-        title: 'Счёт',
-        val: 'avia'
-    },
-    {
-        id: 42,
-        title: 'Тестовый вопрос',
-        val: 'avia'
+import { config } from '@/config'
+import {onMounted, ref} from 'vue'
+import axios from 'axios'
+import {useGameStore} from "@/stores/game";
+
+const store = useGameStore();
+export interface ICategory {
+    id: number
+    name: string
+}
+const categoryFormModel = defineModel<{
+    selected: ICategory[]
+    searchText: string
+}>({
+    default: {
+        selected: [],
+        searchText: ''
     }
-]
+});
+
+async function findIndexOfCategoryInModel (_category: ICategory) : Promise<number> {
+return categoryFormModel.value.selected.findIndex(item => {
+    return (item.id === _category.id) && (item.name === _category.name)
+});
+
+}
+const handleCategoryClick = async(_data: ICategory) => {
+    findIndexOfCategoryInModel(_data).then((index)=>{
+        store.globalNotification.clear();
+        console.log(index);
+        (index === -1) ? categoryFormModel.value.selected.push(_data) : categoryFormModel.value.selected.filter(cat => cat.name !== _data.name);
+    }).catch((error)=>{
+        store.globalNotification.message = error.message
+        store.globalNotification.type = 'error'
+        store.globalNotification.isFixed = true
+    })
+}
+
+const searchText = ref('')
+const searchResult = ref<ICategory[]>([]);
+const handleChange = async() => {
+    categoryFormModel.value.searchText = searchText.value
+    axios.get(
+        config.urls.search.categories + '?query=' + encodeURIComponent(searchText.value)
+    ).then(function (res) {
+        if (res.status === 200) {
+            searchResult.value = res.data
+            categoryFormModel.value.selected.forEach(item => !searchResult.value.includes(item) ?? searchResult.value.unshift(item))
+        }
+    })
+
+}
+onMounted(()=>{
+    categoryFormModel.value.selected = store.getQuestionCategories()
+})
 </script>
 
 <style scoped>
@@ -94,10 +100,10 @@ h2 {
     min-height: 50px !important;
 }
 @media screen and (max-width: 500px) {
-    .checkboxes__wrapper{
+    .checkboxes__wrapper {
         margin-top: 1em;
     }
-    :deep(.checkbox__wrapper){
+    :deep(.checkbox__wrapper) {
         margin: 0.75em;
     }
 }

@@ -1,7 +1,7 @@
 <template>
+    <input type="checkbox" hidden v-model="isChecked" />
     <div class="checkbox__wrapper">
         <div class="myCheckbox" @click="handleCheckboxClick">
-            <input type="checkbox" hidden v-model="isChecked" />
             <CheckboxBox class="cbox" :class="{ checked: isChecked }" />
             <CheckElem v-if="isChecked" class="checkmark" :class="{ checked: isChecked }" />
         </div>
@@ -50,7 +50,7 @@
 import CheckboxBox from '@/assets/CheckboxBox.vue'
 import CheckElem from '@/assets/CheckElem.vue'
 import { ref } from 'vue'
-const isChecked = ref(false)
+const isChecked = defineModel<boolean>({ default: false })
 
 const handleCheckboxClick = () => {
     isChecked.value = !isChecked.value

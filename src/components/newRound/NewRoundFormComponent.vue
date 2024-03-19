@@ -72,7 +72,6 @@
                 :max="500"
                 :min="0"
                 :default="40"
-                :desc="'Сколько раз за 1 раунд можно использовать'"
                 :increase="5"
                 :ico="'time'"
                 v-model="time_to_answer"
@@ -102,15 +101,18 @@
     border-radius: 1em;
     background: white;
 }
+.features {
+    margin-top: 2em;
+}
 @media screen and (max-width: 700px) {
-    .round__wrapper{
-      .radio__wrapper{
-        display:inline-block;
-        margin: .5em;
-      }
-      :deep(.wrapper.myradio){
-        margin:.5em;
-      }
+    .round__wrapper {
+        .radio__wrapper {
+            display: inline-block;
+            margin: 0.5em;
+        }
+        :deep(.wrapper.myradio) {
+            margin: 0.5em;
+        }
     }
 }
 </style>
@@ -119,108 +121,149 @@ import RadioGroup from '@/components/base/RadioGroup.vue'
 import FeatureComponent from '@/components/newRound/FeatureComponent.vue'
 import InputComponent from '@/components/base/InputComponent.vue'
 import { computed, ref } from 'vue'
-import {useGameStore} from '@/stores/game';
+import { useGameStore } from '@/stores/game'
 
-const gameStore = useGameStore();
+//TODO: store или store определиться уже
+const store = useGameStore()
 
 const remove_answer = computed({
     get: () => {
-        if (gameStore.currentGame && !gameStore.currentGame.isCommonFeatures && gameStore.currentRound.settings.remove_answer){
-            return gameStore.currentRound.settings.remove_answer ?? 0
-        }else {
-            return gameStore.currentGame.game_settings.tacticts.remove_answers ?? 0;
+        if (
+            store.currentGame &&
+            !store.currentGame.isCommonFeatures &&
+            store.currentRound.settings.remove_answer
+        ) {
+            return store.currentRound.settings.remove_answer ?? 0
+        } else {
+            return store.currentGame.game_settings.tactics.remove_answer ?? 0
         }
     },
     set: (val: number) => {
-        if (gameStore.currentGame && !gameStore.currentGame.isCommonFeatures && gameStore.currentRound.settings.remove_answer){
-            gameStore.currentRound.settings.remove_answer = val;
-        }else {
-            gameStore.currentGame.game_settings.tacticts.remove_answers = val;
+        if (
+            store.currentGame &&
+            !store.currentGame.isCommonFeatures &&
+            store.currentRound.settings.remove_answer
+        ) {
+            store.currentRound.settings.remove_answer = val
+        } else {
+            store.currentGame.game_settings.tactics.remove_answer = val
         }
     }
-});
+})
 const one_for_all = computed({
     get: () => {
-        if (gameStore.currentGame && !gameStore.currentGame.isCommonFeatures && gameStore.currentRound.settings.one_for_all){
-            return gameStore.currentRound.settings.one_for_all ?? 0
-        }else {
-            return gameStore.currentGame.game_settings.tacticts.one_for_all ?? 0;
+        if (
+            store.currentGame &&
+            !store.currentGame.isCommonFeatures &&
+            store.currentRound.settings.one_for_all
+        ) {
+            return store.currentRound.settings.one_for_all ?? 0
+        } else {
+            return store.currentGame.game_settings.tactics.one_for_all ?? 0
         }
     },
     set: (val: number) => {
-        if (gameStore.currentGame && !gameStore.currentGame.isCommonFeatures && gameStore.currentRound.settings.one_for_all){
-            gameStore.currentRound.settings.one_for_all = val;
-        }else {
-            gameStore.currentGame.game_settings.tacticts.one_for_all = val;
+        if (
+            store.currentGame &&
+            !store.currentGame.isCommonFeatures &&
+            store.currentRound.settings.one_for_all
+        ) {
+            store.currentRound.settings.one_for_all = val
+        } else {
+            store.currentGame.game_settings.tactics.one_for_all = val
         }
     }
-});
+})
 const question_bet = computed({
     get: () => {
-        if (gameStore.currentGame && !gameStore.currentGame.isCommonFeatures && gameStore.currentRound.settings.question_bet){
-            return gameStore.currentRound.settings.question_bet ?? 0
-        }else {
-            return gameStore.currentGame.game_settings.tacticts.question_bet ?? 0;
+        if (
+            store.currentGame &&
+            !store.currentGame.isCommonFeatures &&
+            store.currentRound.settings.question_bet
+        ) {
+            return store.currentRound.settings.question_bet ?? 0
+        } else {
+            return store.currentGame.game_settings.tactics.question_bet ?? 0
         }
     },
     set: (val: number) => {
-        if (gameStore.currentGame && !gameStore.currentGame.isCommonFeatures && gameStore.currentRound.settings.question_bet){
-            gameStore.currentRound.settings.question_bet = val;
-        }else {
-            gameStore.currentGame.game_settings.tacticts.question_bet = val;
+        if (
+            store.currentGame &&
+            !store.currentGame.isCommonFeatures &&
+            store.currentRound.settings.question_bet
+        ) {
+            store.currentRound.settings.question_bet = val
+        } else {
+            store.currentGame.game_settings.tactics.question_bet = val
         }
     }
-});
+})
 const all_in = computed({
     get: () => {
-        if (gameStore.currentGame && !gameStore.currentGame.isCommonFeatures && gameStore.currentRound.settings.all_in){
-            return gameStore.currentRound.settings.all_in ?? 0
-        }else {
-            return gameStore.currentGame.game_settings.tacticts.all_in ?? 0;
+        if (
+            store.currentGame &&
+            !store.currentGame.isCommonFeatures &&
+            store.currentRound.settings.all_in
+        ) {
+            return store.currentRound.settings.all_in ?? 0
+        } else {
+            return store.currentGame.game_settings.tactics.all_in ?? 0
         }
     },
     set: (val: number) => {
-        if (gameStore.currentGame && !gameStore.currentGame.isCommonFeatures && gameStore.currentRound.settings.all_in){
-            gameStore.currentRound.settings.all_in = val;
-        }else {
-            gameStore.currentGame.game_settings.tacticts.all_in = val;
+        if (
+            store.currentGame &&
+            !store.currentGame.isCommonFeatures &&
+            store.currentRound.settings.all_in
+        ) {
+            store.currentRound.settings.all_in = val
+        } else {
+            store.currentGame.game_settings.tactics.all_in = val
         }
     }
-});
+})
 const team_bet = computed({
     get: () => {
-        if (gameStore.currentGame && !gameStore.currentGame.isCommonFeatures && gameStore.currentRound.settings.team_bet){
-            return gameStore.currentRound.settings.team_bet ?? 0
-        }else {
-            return gameStore.currentGame.game_settings.tacticts.team_bet ?? 0;
+        if (
+            store.currentGame &&
+            !store.currentGame.isCommonFeatures &&
+            store.currentRound.settings.team_bet
+        ) {
+            return store.currentRound.settings.team_bet ?? 0
+        } else {
+            return store.currentGame.game_settings.tactics.team_bet ?? 0
         }
     },
     set: (val: number) => {
-        if (gameStore.currentGame && !gameStore.currentGame.isCommonFeatures && gameStore.currentRound.settings.team_bet){
-            gameStore.currentRound.settings.team_bet = val;
-        }else {
-            gameStore.currentGame.game_settings.tacticts.team_bet = val;
+        if (
+            store.currentGame &&
+            !store.currentGame.isCommonFeatures &&
+            store.currentRound.settings.team_bet
+        ) {
+            store.currentRound.settings.team_bet = val
+        } else {
+            store.currentGame.game_settings.tactics.team_bet = val
         }
     }
-});
+})
 const time_to_answer = computed({
     get: () => {
-        return gameStore.currentRound.settings.time_to_answer ?? 40;
+        return store.currentRound.settings.time_to_answer ?? 40
     },
     set: (val: number) => {
-        if (typeof val === 'number' && val >= 2){
-            gameStore.currentRound.settings.time_to_answer = val;
+        if (typeof val === 'number' && val >= 2) {
+            store.currentRound.settings.time_to_answer = val
         }
     }
-});
+})
 const roundName = computed({
-	get: () => {
-		return gameStore.currentRound.settings.name ?? '';
-	},
-	set: (value: string) => {
-			gameStore.currentRound.settings.name = value;
-		}
-	});
+    get: () => {
+        return store.currentRound.settings.name ?? ''
+    },
+    set: (value: string) => {
+        store.currentRound.settings.name = value
+    }
+})
 const radiobtns = [
     {
         val: 'classical',
@@ -236,13 +279,13 @@ const radiobtns = [
     }
 ]
 const roundType = computed({
-	get: () => {
-		return gameStore.currentRound.type ?? 'classical';
-	},
-	set: (value: string) => {
-			gameStore.currentRound.type = value;
-		}
-	});
+    get: () => {
+        return store.currentRound.type ?? 'classical'
+    },
+    set: (value: string) => {
+        store.currentRound.type = value
+    }
+})
 
 // const allFeatures = [
 //     {
@@ -266,7 +309,7 @@ const roundType = computed({
 //         ico: null
 //     },
 //     {
-        
+
 //         tactic: 'one_for_all',
 //         title: 'Один за всех',
 //         increase: 1,
@@ -316,5 +359,4 @@ const roundType = computed({
 //         ico: null
 //     }
 // ];
-
 </script>

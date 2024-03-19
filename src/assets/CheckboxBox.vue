@@ -11,7 +11,5 @@
             stroke="#455588"
         />
     </svg>
- 
 </template>
-   <style scoped>
-    </style>
+<style scoped></style>

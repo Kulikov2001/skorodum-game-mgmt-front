@@ -1,8 +1,8 @@
 <template>
     <div class="menu__wrapper">
-        <BtnNew :class="{'active' : isOn(['new'])}" class="mainBtn-item" @click="newPage" />
-        <BtnAll :class="{'active' : isOn(['games'])}" class="mainBtn-item" @click="allPage" />
-        <BtnBank :class="{'active' : isOn(['bank'])}" class="mainBtn-item" @click="bankPage" />
+        <BtnNew :class="{ active: isOn(['new']) }" class="mainBtn-item" @click="newPage" />
+        <BtnAll :class="{ active: isOn(['games']) }" class="mainBtn-item" @click="allPage" />
+        <BtnBank :class="{ active: isOn(['bank']) }" class="mainBtn-item" @click="bankPage" />
     </div>
 </template>
 <script setup lang="ts">
@@ -22,12 +22,11 @@ const bankPage = async () => {
     router.push({ path: '/bank' })
 }
 function isOn(_page: string[]): boolean {
-    return _page.some(el => router.currentRoute.value.path.split('/').includes(el));
+    return _page.some((el) => router.currentRoute.value.path.split('/').includes(el))
 }
-
 </script>
 <style scoped>
-.active{
+.active {
     filter: grayscale(1);
 }
 .menu__wrapper {

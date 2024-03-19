@@ -2,8 +2,8 @@
     <div class="wrapper__question-component">
         <div class="options__bar">
             <div class="option search">
-            <SearchFieldComponent style="width: 100%;"/>
-        </div>
+                <SearchFieldComponent style="width: 100%" />
+            </div>
             <div class="option">
                 <MyCheckboxComponent />
                 <span>Открытый вопрос</span>
@@ -20,22 +20,27 @@
         <div class="wrapper__list">
             <ul class="question__list">
                 <li v-for="(item, key) in mock" :key="key" class="question__list-item">
-                    <MyCheckboxComponent style="flex-grow: 0; flex-shrink: 12;" />
+                    <!-- TODO: Оживить чекбокс и v-for -->
+                    <MyCheckboxComponent
+                        v-model="selectedQ"
+                        style="flex-grow: 0; flex-shrink: 12"
+                    />
                     <div class="question__info">
-                        <div class="row question">                        
-                            <div class="question__title"> {{ item.title }}</div>
+                        <div class="row question">
+                            <div class="question__title">{{ item.question }}</div>
                         </div>
-                        <div class="row category">
-                            <div 
+                        <div class="row categories">
+                            <div
                                 class="category__badge"
-                                v-for="(catitem, catkey) in item.category"
+                                v-for="(catitem, catkey) in item.categories"
                                 :key="catkey"
-                                >
+                            >
                                 {{ catitem }}
                             </div>
                         </div>
                     </div>
                     <div class="status__ico">
+                        <!-- TODO: 1. Натянуть логику 2. Вынести в отдельный компонент-->
                         <div class="status__ico-item">
                             <AttachmentIco width="22" />
                         </div>
@@ -53,65 +58,107 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import SearchFieldComponent from '@/components/base/SearchFieldComponent.vue'
 import MyCheckboxComponent from '@/components/base/MyCheckboxComponent.vue'
 import AttachmentIco from '@/assets/AttachmentIco.vue'
 import EditableIco from '@/assets/EditableIco.vue'
 import DeleteBtn from '@/assets/DeleteBtn.vue'
-const mock = [
+import type { IQuestion } from '@/stores/game'
+const mock: IQuestion[] = [
     {
-        title: 'Почему московский речной вокзал был построене не на самом берегу реки?',
-        category: ['Авиация', 'География', 'Грамматика']
+        question: 'Почему московский речной вокзал был построене не на самом берегу реки?',
+        categories: ['Авиация', 'География', 'Грамматика']
     },
     {
-        title: 'Почему московский речной вокзал был построене не на самом берегу реки?',
-        category: ['Авиация']
+        question: 'Почему московский речной вокзал был построене не на самом берегу реки?',
+        categories: ['Авиация']
     },
     {
-        title: 'Почему московский речной вокзал был построене не на самом берегу реки?',
-        category: ['Авиация', 'География']
+        question: 'Почему московский речной вокзал был построене не на самом берегу реки?',
+        categories: ['Авиация', 'География']
     },
     {
-        title: 'Почему московский речной вокзал был построене не на самом берегу реки?'
+        question: 'Почему московский речной вокзал был построене не на самом берегу реки?'
     },
     {
-        title: 'Почему московский речной вокзал был построене не на самом берегу реки?',
-        category: ['Авиация', 'Грамматика']
+        question: 'Почему московский речной вокзал был построене не на самом берегу реки?',
+        categories: ['Авиация', 'Грамматика']
     },
     {
-        title: 'Почему московский речной вокзал был построене не на самом берегу реки?',
-        category: ['Авиация', 'География', 'Грамматика']
+        question: 'Почему московский речной вокзал был построене не на самом берегу реки?',
+        categories: ['Авиация', 'География', 'Грамматика']
     },
     {
-        title: 'Почему московский речной вокзал был построене не на самом берегу реки?',
-        category: ['Авиация', 'География', 'Грамматика']
+        question: 'Почему московский речной вокзал был построене не на самом берегу реки?',
+        categories: ['Авиация', 'География', 'Грамматика']
     },
     {
-        title: 'Почему московский речной вокзал был построене не на самом берегу реки?',
-        category: ['Авиация', 'География', 'Грамматика']
+        question: 'Почему московский речной вокзал был построене не на самом берегу реки?',
+        categories: ['Авиация', 'География', 'Грамматика']
     }
 ]
+// const emit = defineEmits<{
+//     (e: 'titleClick'): void
+// }>()
+
+// const emitTitleClick = () => {
+//     emit('titleClick')
+// }
+const selectedQ = ref<any>(true)
+// const toggleQ = (q: any) => {
+//     if (selectedQ.value.includes(q)){
+//         selectedQ.value = selectedQ.value.filter(item => item != q);
+//     }
+//     else {
+//         selectedQ.value.push(q);
+//     }
+// }
 </script>
 
 <style scoped>
+/**
+    Accordion styles
+    START
+    TODO: Логически привести в порядок, разобраться с анимацией и дерганьем
+*/
+.accordionEmbeded.wrapper__question-component {
+    transition: max-height 2s ease;
+    overflow: hidden;
+}
+.accordionEmbeded.wrapper__question-component:not(.active) {
+    max-height: 0;
+}
+.accordionEmbeded.wrapper__question-component.active {
+    max-height: none !important;
+}
+.accordionEmbeded.accordion__wrapper :deep(h2) {
+    color: var(--text-darker);
+    font-size: 1.25em;
+}
 
-.status__ico{
-    display:inline-flex;
+/**
+    Accordion styles
+    END
+*/
+
+.status__ico {
+    display: inline-flex;
     align-items: center;
 }
-.status__ico-item{
-    margin: auto .5em;
+.status__ico-item {
+    margin: auto 0.5em;
     stroke: var(--text-grey);
 }
-.question__list-item{
+.question__list-item {
     color: black;
     display: grid;
     grid-template-columns: 2fr 8fr 2fr;
     margin: 1em;
-    padding: .5em;
+    padding: 0.5em;
     border-bottom: 1px solid var(--text-grey);
 }
-.question__title{
+.question__title {
     font-weight: 500;
 }
 /* .question__info{
@@ -122,56 +169,56 @@ const mock = [
     flex-grow: 0;
     flex-shrink: 12;
 } */
-ul{
+ul {
     list-style-type: none;
 }
-.wrapper{
+.wrapper {
     width: 100%;
 }
-.options__bar{
+.options__bar {
     width: 100%;
     display: flex;
     flex-direction: row;
 }
-.option:not(.search){
+.option:not(.search) {
     display: inline-flex;
     width: max-content;
     align-items: center;
 }
-.option.search :deep(.search-field){
+.option.search :deep(.search-field) {
     width: 100%;
 }
-.option.search{
+.option.search {
     margin-right: 2em;
 }
-.option span{
+.option span {
     white-space: pre;
-    margin: auto .5em;
+    margin: auto 0.5em;
     vertical-align: center;
 }
-.wrapper__list{
-    display:block;
+.wrapper__list {
+    display: block;
     margin: 1em auto;
 }
-.category__badge{
-    margin: auto .25em;
+.category__badge {
+    margin: auto 0.25em;
     border-radius: 2em;
-    padding: .25em .8em;
-    font-size: .9em;
+    padding: 0.25em 0.8em;
+    font-size: 0.9em;
     background: var(--text-grey);
     color: var(--text-darker);
 }
-.category__badge:first-child{
+.category__badge:first-child {
     margin-left: 0;
 }
-.row.category{
+.row.categories {
     margin-top: 1em;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
 }
-@media screen and (max-width:500px) {
-    .options__bar{
+@media screen and (max-width: 500px) {
+    .options__bar {
         flex-direction: column;
         width: 80%;
         margin: 0 auto;

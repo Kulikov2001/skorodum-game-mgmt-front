@@ -3,24 +3,24 @@
         <h3 class="title">{{ props.title }}</h3>
         <p class="answers__title">Варианты ответов:</p>
         <ol>
-            <li :key="i" v-for="(answer, i) in props.variations">
+            <li :key="i" v-for="(answer, i) in props.answers">
                 <span class="answer__text">
                     {{ answer }}
                 </span>
             </li>
         </ol>
         <p class="correct__answer-text">
-            Номер правильного ответа: <span class="correct__answer-num">{{ props.correct }}</span>
+            Номер правильного ответа:
+            <span class="correct__answer-num">{{ props.answers.indexOf(props.correct) + 1 }}</span>
         </p>
     </div>
 </template>
 
 <script setup lang="ts">
-import { defineProps } from 'vue'
 const props = defineProps<{
-    title: string,
-    variations: string[],
-    correct: number | string
+    title: string
+    answers: string[]
+    correct: string
 }>()
 </script>
 
@@ -65,10 +65,10 @@ li:before {
     margin: auto 0.5em;
 }
 @media screen and (max-width: 500px) {
-    ol{
-        margin-left:0;
+    ol {
+        margin-left: 0;
     }
-    li:before{
+    li:before {
         margin: 0 0.5em 0 0;
     }
 }

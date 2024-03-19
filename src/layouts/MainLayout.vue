@@ -41,7 +41,7 @@ main {
     margin-top: 3em;
 }
 .slide-fade-enter-active {
-  transition: all 0.3s ease-out;
+    transition: all 0.3s ease-out;
 }
 
 .slide-fade-leave-active {
@@ -50,16 +50,15 @@ main {
 
 .slide-fade-enter-from,
 .slide-fade-leave-to {
-  transform: translateX(20px);
-  opacity: 0;
+    transform: translateX(20px);
+    opacity: 0;
 }
-
 </style>
 
 <style v-if="$route.path === '/bank'">
-@media screen and (max-width: 600px){
-    .main__wrapper.bank{
-        padding:0 !important;
+@media screen and (max-width: 600px) {
+    .main__wrapper.bank {
+        padding: 0 !important;
     }
 }
 </style>

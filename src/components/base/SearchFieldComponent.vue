@@ -6,8 +6,9 @@
     </div>
     <InputComponent
         class="search-field"
-        :placeholder="'Поиск по категориям'"
+        :placeholder="props.placeholder ?? 'Поиск по категориям'"
         v-model="searchText"
+        @keyup="emit('userinput')"
     />
 </template>
 
@@ -15,8 +16,13 @@
 import InputComponent from '@/components/base/InputComponent.vue'
 import SearchLoop from '@/assets/SeachLoop.vue'
 import { ref } from 'vue'
-
-const searchText = ref('')
+const props = defineProps<{
+    placeholder?: string
+}>()
+const emit = defineEmits<{
+    (e: 'userinput'): void
+}>()
+const searchText = defineModel<string>()
 </script>
 
 <style scoped>

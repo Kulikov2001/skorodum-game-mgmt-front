@@ -1,24 +1,40 @@
 <template>
     <nav class="tab__wrapper">
-        <div class="tab__item active">
+        <div class="tab__item" :class="{ active: !photoTabOpened }" @click="toggleTab('default')">
             <h3>Вопрос</h3>
         </div>
-        <div class="tab__item">
+        <div class="tab__item" :class="{ active: photoTabOpened }" @click="toggleTab('photo')">
             <h3>Фото вопрос</h3>
         </div>
     </nav>
     <div class="tab__content">
-        <div class="tab__content-wrapper">
+        <div class="tab__content-wrapper" v-if="!photoTabOpened">
             <div class="tab__content-item">
                 <h3 align="center">Медиа до вопроса</h3>
-                <FilePicker />
+                <FilePicker :role="{ position: 'before' }" />
                 <p class="desc" align="center">
                     Выберите медиа файл для демонстрации перед вопросом
                 </p>
             </div>
             <div class="tab__content-item">
                 <h3 align="center">Медиа до вопроса</h3>
-                <FilePicker />
+                <FilePicker :role="{ position: 'after' }" />
+                <p class="desc" align="center">
+                    Выберите медиа файл для демонстрации после вопроса
+                </p>
+            </div>
+        </div>
+        <div class="tab__content-wrapper" v-if="photoTabOpened">
+            <div class="tab__content-item">
+                <h3 align="center">Медиа до вопроса!!</h3>
+                <FilePicker :role="{ position: 'before' }" />
+                <p class="desc" align="center">
+                    Выберите медиа файл для демонстрации перед вопросом
+                </p>
+            </div>
+            <div class="tab__content-item">
+                <h3 align="center">Медиа до вопроса</h3>
+                <FilePicker :role="{ position: 'after' }" />
                 <p class="desc" align="center">
                     Выберите медиа файл для демонстрации после вопроса
                 </p>
@@ -29,6 +45,11 @@
 
 <script setup lang="ts">
 import FilePicker from '@/components/base/FilePickerComponent.vue'
+import { ref } from 'vue'
+const photoTabOpened = ref(false)
+const toggleTab = async (val: string) => {
+    val === 'photo' ? (photoTabOpened.value = true) : (photoTabOpened.value = false)
+}
 </script>
 
 <style scoped>
@@ -56,6 +77,7 @@ import FilePicker from '@/components/base/FilePickerComponent.vue'
     border-radius: 1.5em;
     color: var(--text-darker);
     padding: 0.5em 0.5em 2em 0.5em;
+    transition: background-color 0.3s ease;
 }
 .tab__item h3 {
     font-weight: 700;

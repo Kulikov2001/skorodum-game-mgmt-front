@@ -1,12 +1,14 @@
 <template>
-    <input v-model="modelValue" :checked="modelValue.value" type="checkbox" /><label @click="handleClick"></label>
+    <input v-model="modelValue" :checked="modelValue.value" type="checkbox" /><label
+        @click="handleClick"
+    ></label>
 </template>
 
 <script setup lang="ts">
-const modelValue = defineModel();
+const modelValue = defineModel<any>()
 
-const handleClick = () =>{
-    modelValue.value = !modelValue.value;
+const handleClick = () => {
+    modelValue.value = !modelValue.value
 }
 </script>
 
