@@ -2,7 +2,7 @@
     <div class="wrapper__question-component">
         <div class="options__bar">
             <div class="option search">
-                <SearchFieldComponent style="width: 100%" />
+                <SearchFieldComponent :placeholder="'Поиск вопросов...'" @userinput="handleChange" v-model="searchText" style="width: 100%" />
             </div>
             <div class="option">
                 <MyCheckboxComponent />
@@ -19,10 +19,10 @@
         </div>
         <div class="wrapper__list">
             <ul class="question__list">
-                <li v-for="(item, key) in mock" :key="key" class="question__list-item">
+                <li v-for="item in questionList.slice(0,10)" :key="item.id" class="question__list-item">
                     <!-- TODO: Оживить чекбокс и v-for -->
                     <MyCheckboxComponent
-                        v-model="selectedQ"
+
                         style="flex-grow: 0; flex-shrink: 12"
                     />
                     <div class="question__info">
@@ -42,13 +42,13 @@
                     <div class="status__ico">
                         <!-- TODO: 1. Натянуть логику 2. Вынести в отдельный компонент-->
                         <div class="status__ico-item">
-                            <AttachmentIco width="22" />
+                            <AttachmentIco v-if="item.media_data" class="btn" width="22" />
                         </div>
                         <div class="status__ico-item">
-                            <EditableIco width="18" />
+                            <EditableIco class="btn" width="18" />
                         </div>
                         <div class="status__ico-item">
-                            <DeleteBtn width="18" />
+                            <DeleteBtn class="btn" @click="handleDelete(item)" width="18" />
                         </div>
                     </div>
                 </li>
@@ -58,54 +58,85 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import {onMounted, Ref, ref, UnwrapRef} from 'vue'
 import SearchFieldComponent from '@/components/base/SearchFieldComponent.vue'
 import MyCheckboxComponent from '@/components/base/MyCheckboxComponent.vue'
 import AttachmentIco from '@/assets/AttachmentIco.vue'
 import EditableIco from '@/assets/EditableIco.vue'
 import DeleteBtn from '@/assets/DeleteBtn.vue'
 import type { IQuestion } from '@/stores/game'
-const mock: IQuestion[] = [
-    {
-        question: 'Почему московский речной вокзал был построене не на самом берегу реки?',
-        categories: ['Авиация', 'География', 'Грамматика']
-    },
-    {
-        question: 'Почему московский речной вокзал был построене не на самом берегу реки?',
-        categories: ['Авиация']
-    },
-    {
-        question: 'Почему московский речной вокзал был построене не на самом берегу реки?',
-        categories: ['Авиация', 'География']
-    },
-    {
-        question: 'Почему московский речной вокзал был построене не на самом берегу реки?'
-    },
-    {
-        question: 'Почему московский речной вокзал был построене не на самом берегу реки?',
-        categories: ['Авиация', 'Грамматика']
-    },
-    {
-        question: 'Почему московский речной вокзал был построене не на самом берегу реки?',
-        categories: ['Авиация', 'География', 'Грамматика']
-    },
-    {
-        question: 'Почему московский речной вокзал был построене не на самом берегу реки?',
-        categories: ['Авиация', 'География', 'Грамматика']
-    },
-    {
-        question: 'Почему московский речной вокзал был построене не на самом берегу реки?',
-        categories: ['Авиация', 'География', 'Грамматика']
-    }
-]
+import {useGameStore} from "@/stores/game";
+import axios from "axios";
+import {config} from "@/config";
+import type {ICategory} from "@/components/question/CategoryFormComponent.vue";
+
+const questionList = ref<any>([]);
+
+onMounted(()=>{
+    //questionList.value = getQuestions();
+})
+const getQuestions = (): IQuestion[] => {
+    const result: IQuestion[] = [];
+    axios.get(config.urls.get.all.questions).then((res:any)=>{
+        res.data.forEach((el: any) => {
+            const temp: IQuestion = {
+                id: el.id,
+                type: el.question_type,
+                question: el.question_text,
+                answers: el.answers.split(',') /*TODO: Изменить сепоратор на ;*/,
+                correct_answer: el.correct_answer,
+                time_to_answer: el.time_to_answer,
+                media_data: {
+                    show_image: el.show_image,
+                    video: {
+                        before: el.video_before,
+                        after: '' /*TODO: Сделать на беке*/
+                    },
+                    image: {
+                        before: el.image_before,
+                        after: el.image_after,
+                        player_displayed: el.player_display
+                    }
+                },
+                categories: []
+            }
+            result.push(temp)
+        })
+    }).catch((error: any)=>{
+        console.log(error)
+        // globalNotification.value.message = error.message
+        // globalNotification.value.isFixed = true
+        // globalNotification.value.type = 'error'
+    });
+    return result
+}
 // const emit = defineEmits<{
 //     (e: 'titleClick'): void
 // }>()
-
+questionList.value = getQuestions();
 // const emitTitleClick = () => {
 //     emit('titleClick')
 // }
-const selectedQ = ref<any>(true)
+const selectedQ = ref<number[]>([]);
+const searchText = ref<string>('')
+const handleChange = async() => {
+    // axios.get(
+    //     config.urls.search.question + '?query=' + encodeURIComponent(searchText.value)
+    // ).then(function (res) {
+    //     if (res.status === 200) {
+    //         searchResult.value = res.data.results
+    //         categoryFormModel.value.selected.forEach(item => !searchResult.value.includes(item) ?? searchResult.value.unshift(item))
+    //     }
+    // })
+}
+const handleDelete = async(question: IQuestion) =>{
+    axios.delete(config.urls.delete.question + question.id + '/').then((res)=>{
+        questionList.value = getQuestions();
+    }).catch((err)=>{
+        console.error(err);
+    })
+
+}
 // const toggleQ = (q: any) => {
 //     if (selectedQ.value.includes(q)){
 //         selectedQ.value = selectedQ.value.filter(item => item != q);
@@ -141,7 +172,10 @@ const selectedQ = ref<any>(true)
     Accordion styles
     END
 */
-
+.btn{
+    user-select: none;
+    cursor: pointer;
+}
 .status__ico {
     display: inline-flex;
     align-items: center;

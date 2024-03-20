@@ -276,6 +276,18 @@ export const useGameStore = defineStore('game', () => {
     const setQuestionCategories = async (_categories: ICategory[]) => {
         currentQuestion.value.categories = _categories
     }
+    const getBankQuestions = async(): IQuestion[] => {
+        let result: IQuestion[]
+        axios.get(config.urls.get.all.questions).then((res)=>{
+            result = mapBIQuestionToIQuestions(res.data);
+        }).catch((error)=>{
+            globalNotification.value.message = error.message
+            globalNotification.value.isFixed = true
+            globalNotification.value.type = 'error'
+            result = []
+        });
+        return result;
+    }
     const getQuestionCategories = (): ICategory[]  => {
         return currentQuestion.value.categories
     }
@@ -428,6 +440,7 @@ export const useGameStore = defineStore('game', () => {
     return {
         currentGame,
         globalNotification,
+        getBankQuestions,
         getGamesNames,
         downloadGame,
         deleteGame,
@@ -446,6 +459,7 @@ export const useGameStore = defineStore('game', () => {
         currentRound,
         currentQuestion,
         allQuestionsInCurrentRound,
+        mapBIQuestionToIQuestions,
         addCurrentQuestionToCurrentRound
     }
 })

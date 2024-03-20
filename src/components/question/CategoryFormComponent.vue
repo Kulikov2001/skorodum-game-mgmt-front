@@ -38,22 +38,13 @@ const categoryFormModel = defineModel<{
     }
 });
 
-async function findIndexOfCategoryInModel (_category: ICategory) : Promise<number> {
-return categoryFormModel.value.selected.findIndex(item => {
-    return (item.id === _category.id) && (item.name === _category.name)
-});
 
-}
 const handleCategoryClick = async(_data: ICategory) => {
-    findIndexOfCategoryInModel(_data).then((index)=>{
-        store.globalNotification.clear();
-        console.log(index);
-        (index === -1) ? categoryFormModel.value.selected.push(_data) : categoryFormModel.value.selected.filter(cat => cat.name !== _data.name);
-    }).catch((error)=>{
-        store.globalNotification.message = error.message
-        store.globalNotification.type = 'error'
-        store.globalNotification.isFixed = true
-    })
+    if (categoryFormModel.value.selected.some(already => already.id === _data.id)){
+        categoryFormModel.value.selected = categoryFormModel.value.selected.filter(already => already.id !== _data.id)
+    } else {
+        categoryFormModel.value.selected.push(_data)
+    }
 }
 
 const searchText = ref('')
@@ -64,7 +55,7 @@ const handleChange = async() => {
         config.urls.search.categories + '?query=' + encodeURIComponent(searchText.value)
     ).then(function (res) {
         if (res.status === 200) {
-            searchResult.value = res.data
+            searchResult.value = res.data.results
             categoryFormModel.value.selected.forEach(item => !searchResult.value.includes(item) ?? searchResult.value.unshift(item))
         }
     })

@@ -47,7 +47,8 @@ const config = {
             c: `${root}/upload/`
         },
         search: {
-            categories: `${root}/search-categories/`
+            categories: `${root}/search-categories/`,
+            question: `${root}/`
         }
     }
 }
