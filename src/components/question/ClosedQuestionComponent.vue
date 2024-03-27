@@ -38,14 +38,15 @@
 
 <script setup lang="ts">
 import ButtonsBarComponent from '@/components/base/ButtonsBarComponent.vue'
-import CategoryFormComponent, {ICategory} from '@/components/question/CategoryFormComponent.vue'
+import CategoryFormComponent from '@/components/question/CategoryFormComponent.vue'
+import type {ICategory} from '@/components/question/CategoryFormComponent.vue'
 import InputComponent from '@/components/base/InputComponent.vue'
 import { ref, onMounted } from 'vue'
 import MyCheckboxComponent from '@/components/base/MyCheckboxComponent.vue'
 import { useGameStore } from '@/stores/game'
 import Vector4Answers from '@/assets/Vector4Answers.vue'
-import {config} from "@/config";
-import axios from "axios";
+import { config } from '@/config'
+import axios from 'axios'
 const count = ref<number>(4)
 const answerText = ref<string[]>([])
 const correctAnswer = ref<boolean[]>([])
@@ -86,16 +87,18 @@ const handleAddQuestion = () => {
     resetQuestion()
 }
 const handleAddCategory = () => {
-    if (categoryForm.value!.searchText.length > 2){
-        axios.post(config.urls.create.category, {name: categoryForm.value?.searchText}).then((res)=>{
-            store.setCategories();
-            categoryForm.value!.selected.push(res.data)
-        }).catch((error)=>{
-            store.globalNotification.message = error.message
-            store.globalNotification.type = 'error'
-        })
+    if (categoryForm.value!.searchText.length > 2) {
+        axios
+            .post(config.urls.create.category, { name: categoryForm.value?.searchText })
+            .then((res) => {
+                store.setCategories()
+                categoryForm.value!.selected.push(res.data)
+            })
+            .catch((error) => {
+                store.globalNotification.message = error.message
+                store.globalNotification.type = 'error'
+            })
     }
-
 }
 </script>
 

@@ -2,7 +2,12 @@
     <div class="wrapper__question-component">
         <div class="options__bar">
             <div class="option search">
-                <SearchFieldComponent :placeholder="'Поиск вопросов...'" @userinput="handleChange" v-model="searchText" style="width: 100%" />
+                <SearchFieldComponent
+                    :placeholder="'Поиск вопросов...'"
+                    @userinput="handleChange"
+                    v-model="searchText"
+                    style="width: 100%"
+                />
             </div>
             <div class="option">
                 <MyCheckboxComponent />
@@ -19,15 +24,16 @@
         </div>
         <div class="wrapper__list">
             <ul class="question__list">
-                <li v-for="item in questionList.slice(0,10)" :key="item.id" class="question__list-item">
+                <li
+                    v-for="item in questionList"
+                    :key="item.id"
+                    class="question__list-item"
+                >
                     <!-- TODO: Оживить чекбокс и v-for -->
-                    <MyCheckboxComponent
-
-                        style="flex-grow: 0; flex-shrink: 12"
-                    />
+                    <MyCheckboxComponent style="flex-grow: 0; flex-shrink: 12" />
                     <div class="question__info">
                         <div class="row question">
-                            <div class="question__title">{{ item.question }}</div>
+                            <div class="question__title">{{  item.question }}</div>
                         </div>
                         <div class="row categories">
                             <div
@@ -58,68 +64,69 @@
 </template>
 
 <script setup lang="ts">
-import {onMounted, Ref, ref, UnwrapRef} from 'vue'
+import { onMounted, ref } from 'vue'
 import SearchFieldComponent from '@/components/base/SearchFieldComponent.vue'
 import MyCheckboxComponent from '@/components/base/MyCheckboxComponent.vue'
 import AttachmentIco from '@/assets/AttachmentIco.vue'
 import EditableIco from '@/assets/EditableIco.vue'
 import DeleteBtn from '@/assets/DeleteBtn.vue'
 import type { IQuestion } from '@/stores/game'
-import {useGameStore} from "@/stores/game";
-import axios from "axios";
-import {config} from "@/config";
-import type {ICategory} from "@/components/question/CategoryFormComponent.vue";
+import {CLEAN_QUESTION, useGameStore} from '@/stores/game'
+import axios from 'axios'
+import { config } from '@/config'
+import type { ICategory } from '@/components/question/CategoryFormComponent.vue'
 
-const questionList = ref<any>([]);
+const questionList = ref<any[]>([]);
 
-onMounted(()=>{
-    //questionList.value = getQuestions();
-})
-const getQuestions = (): IQuestion[] => {
-    const result: IQuestion[] = [];
-    axios.get(config.urls.get.all.questions).then((res:any)=>{
-        res.data.forEach((el: any) => {
-            const temp: IQuestion = {
-                id: el.id,
-                type: el.question_type,
-                question: el.question_text,
-                answers: el.answers.split(',') /*TODO: Изменить сепоратор на ;*/,
-                correct_answer: el.correct_answer,
-                time_to_answer: el.time_to_answer,
-                media_data: {
-                    show_image: el.show_image,
-                    video: {
-                        before: el.video_before,
-                        after: '' /*TODO: Сделать на беке*/
+
+const getQuestions = (): Promise<any> => {
+    return axios
+        .get(config.urls.get.all.questions)
+        .then((res: any) => {
+            const result: IQuestion[] = [];
+            res.data.forEach((el: any) => {
+                const temp: IQuestion = {
+                    id: el.id,
+                    type: el.question_type,
+                    question: el.question_text,
+                    answers: el.answers.split(',') /*TODO: Изменить сепоратор на ;*/,
+                    correct_answer: el.correct_answer,
+                    time_to_answer: el.time_to_answer,
+                    media_data: {
+                        show_image: el.show_image,
+                        video: {
+                            before: el.video_before,
+                            after: '' /*TODO: Сделать на беке*/
+                        },
+                        image: {
+                            before: el.image_before,
+                            after: el.image_after,
+                            player_displayed: el.player_display
+                        }
                     },
-                    image: {
-                        before: el.image_before,
-                        after: el.image_after,
-                        player_displayed: el.player_display
-                    }
-                },
-                categories: []
-            }
-            result.push(temp)
+                    categories: []
+                };
+                result.push(temp)
+            })
+            return result
         })
-    }).catch((error: any)=>{
-        console.log(error)
-        // globalNotification.value.message = error.message
-        // globalNotification.value.isFixed = true
-        // globalNotification.value.type = 'error'
-    });
-    return result
+        .catch((error: any) => {
+            console.error(error)
+            // globalNotification.value.message = error.message
+            // globalNotification.value.isFixed = true
+            // globalNotification.value.type = 'error'
+        })
+    //console.log(result);
 }
 // const emit = defineEmits<{
 //     (e: 'titleClick'): void
 // }>()
-questionList.value = getQuestions();
 // const emitTitleClick = () => {
 //     emit('titleClick')
 // }
-const selectedQ = ref<number[]>([]);
+const selectedQ = ref<number[]>([])
 const searchText = ref<string>('')
-const handleChange = async() => {
+const handleChange = async () => {
     // axios.get(
     //     config.urls.search.question + '?query=' + encodeURIComponent(searchText.value)
     // ).then(function (res) {
@@ -129,13 +136,15 @@ const handleChange = async() => {
     //     }
     // })
 }
-const handleDelete = async(question: IQuestion) =>{
-    axios.delete(config.urls.delete.question + question.id + '/').then((res)=>{
-        questionList.value = getQuestions();
-    }).catch((err)=>{
-        console.error(err);
-    })
-
+const handleDelete = async (question: IQuestion) => {
+    axios
+        .delete(config.urls.delete.question + question.id + '/')
+        .then((res) => {
+            questionList.value = getQuestions()
+        })
+        .catch((err) => {
+            console.error(err)
+        })
 }
 // const toggleQ = (q: any) => {
 //     if (selectedQ.value.includes(q)){
@@ -145,6 +154,11 @@ const handleDelete = async(question: IQuestion) =>{
 //         selectedQ.value.push(q);
 //     }
 // }
+onMounted(() => {
+    getQuestions().then((result)=>{
+        questionList.value = result;
+    })
+})
 </script>
 
 <style scoped>
@@ -172,7 +186,7 @@ const handleDelete = async(question: IQuestion) =>{
     Accordion styles
     END
 */
-.btn{
+.btn {
     user-select: none;
     cursor: pointer;
 }

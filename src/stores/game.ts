@@ -178,6 +178,16 @@ export const useGameStore = defineStore('game', () => {
             globalNotification.value.isFixed = false
         }
     })
+    /*
+    * {
+    headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Headers': 'Access-Control-Allow-Methods,Access-Control-Allow-Origin,Access-Control-Allow-Headers, Content-Type, Authorization, Content-Type',
+            'Access-Control-Allow-Methods': '*',
+            "Content-Type": "application/json"
+        // Could work and fix the previous problem, but not in all APIs
+        }}
+    * **/
     const getGamesNames = async () => {
         axios
             .get(config.urls.get.all.games)
@@ -256,9 +266,6 @@ export const useGameStore = defineStore('game', () => {
                 if (res.status < 300) {
                     globalNotification.value.message = 'Категория удалена'
                     globalNotification.value.type = 'success'
-                    return true
-                } else {
-                    return null
                 }
             })
             .catch(function (error) {
@@ -276,47 +283,52 @@ export const useGameStore = defineStore('game', () => {
     const setQuestionCategories = async (_categories: ICategory[]) => {
         currentQuestion.value.categories = _categories
     }
-    const getBankQuestions = async(): IQuestion[] => {
-        let result: IQuestion[]
-        axios.get(config.urls.get.all.questions).then((res)=>{
-            result = mapBIQuestionToIQuestions(res.data);
-        }).catch((error)=>{
-            globalNotification.value.message = error.message
-            globalNotification.value.isFixed = true
-            globalNotification.value.type = 'error'
-            result = []
-        });
+    const getBankQuestions =  (): IQuestion[] => {
+        let result: IQuestion[] = []
+        axios
+            .get(config.urls.get.all.questions)
+            .then((res) => {
+                result = mapBIQuestionToIQuestions(res.data)
+            })
+            .catch((error) => {
+                globalNotification.value.message = error.message
+                globalNotification.value.isFixed = true
+                globalNotification.value.type = 'error'
+                result = []
+            })
         return result;
     }
-    const getQuestionCategories = (): ICategory[]  => {
+    const getQuestionCategories = (): ICategory[] => {
         return currentQuestion.value.categories
     }
     const addCategory = (clikedData: string, place: any) => {
         place.categories.push(clikedData)
     }
-    const getCategories = (): ICategory[] =>{
+    const getCategories = (): ICategory[] => {
         const categories: ICategory[] = []
-        axios.get(config.urls.get.all.categories).then(function (res) {
-            globalNotification.value.clear()
-                res.data.map((item: ICategory)=>{
-                 if (!categories.includes(item)) {
-                     categories.push({
-                         id: item.id,
-                         name: item.name
-                     });
-                 }
+        axios
+            .get(config.urls.get.all.categories)
+            .then(function (res) {
+                globalNotification.value.clear()
+                res.data.map((item: ICategory) => {
+                    if (!categories.includes(item)) {
+                        categories.push({
+                            id: item.id,
+                            name: item.name
+                        })
+                    }
                 })
-            }
-        ).catch((error)=>{
-            console.error(error);
-            globalNotification.value.message = error.message
-            globalNotification.value.type = 'error'
-            setTimeout(getCategories, 2000)
-        });
-        return categories;
+            })
+            .catch((error) => {
+                console.error(error)
+                globalNotification.value.message = error.message
+                globalNotification.value.type = 'error'
+                setTimeout(getCategories, 2000)
+            })
+        return categories
     }
-    const setCategories = ()=>{
-        currentQuestion.value.categories = getCategories();
+    const setCategories = () => {
+        currentQuestion.value.categories = getCategories()
     }
     const clearGame = () => {
         currentGame.value = CLEAN_GAME
@@ -346,7 +358,8 @@ export const useGameStore = defineStore('game', () => {
         a.remove()
     }
     function mapBILiteGameToIGame(data: BIGameLite[]): IGame[] {
-        return data.map((item) => {
+        console.log(data);
+        return data.map((item:any) => {
             return {
                 id: item.id,
                 game_info: {

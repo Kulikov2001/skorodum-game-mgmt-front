@@ -1,16 +1,19 @@
 <template>
     <div class="category__wrapper">
         <h2>Категории</h2>
-        <SearchFieldComponent @userinput="handleChange" v-model="searchText" />
+        <SearchFieldComponent @userinput="handleChange" v-model="searchText" :placeholder="'Поиск по категориям'" />
 
         <div class="checkboxes__wrapper">
             <MySwitchComponent
                 v-for="category in searchResult"
                 @click="handleCategoryClick(category)"
                 :key="category.id"
-                :class="{'active':  categoryFormModel.selected.some(item => item.name === category.name)  }"
+                :class="{
+                    active: categoryFormModel.selected.some((item) => item.name === category.name)
+                }"
             >
-                {{ category.name }}</MySwitchComponent>
+                {{ category.name }}</MySwitchComponent
+            >
         </div>
     </div>
 </template>
@@ -19,11 +22,11 @@
 import SearchFieldComponent from '@/components/base/SearchFieldComponent.vue'
 import MySwitchComponent from '@/components/base/MySwitchComponent.vue'
 import { config } from '@/config'
-import {onMounted, ref} from 'vue'
+import { onMounted, ref } from 'vue'
 import axios from 'axios'
-import {useGameStore} from "@/stores/game";
+import { useGameStore } from '@/stores/game'
 
-const store = useGameStore();
+const store = useGameStore()
 export interface ICategory {
     id: number
     name: string
@@ -36,32 +39,34 @@ const categoryFormModel = defineModel<{
         selected: [],
         searchText: ''
     }
-});
+})
 
-
-const handleCategoryClick = async(_data: ICategory) => {
-    if (categoryFormModel.value.selected.some(already => already.id === _data.id)){
-        categoryFormModel.value.selected = categoryFormModel.value.selected.filter(already => already.id !== _data.id)
+const handleCategoryClick = async (_data: ICategory) => {
+    if (categoryFormModel.value.selected.some((already) => already.id === _data.id)) {
+        categoryFormModel.value.selected = categoryFormModel.value.selected.filter(
+            (already) => already.id !== _data.id
+        )
     } else {
         categoryFormModel.value.selected.push(_data)
     }
 }
 
 const searchText = ref('')
-const searchResult = ref<ICategory[]>([]);
-const handleChange = async() => {
+const searchResult = ref<ICategory[]>([])
+const handleChange = async () => {
     categoryFormModel.value.searchText = searchText.value
-    axios.get(
-        config.urls.search.categories + '?query=' + encodeURIComponent(searchText.value)
-    ).then(function (res) {
-        if (res.status === 200) {
-            searchResult.value = res.data.results
-            categoryFormModel.value.selected.forEach(item => !searchResult.value.includes(item) ?? searchResult.value.unshift(item))
-        }
-    })
-
+    axios
+        .get(config.urls.search.categories + '?query=' + encodeURIComponent(searchText.value))
+        .then(function (res) {
+            if (res.status === 200) {
+                searchResult.value = res.data.results
+                categoryFormModel.value.selected.forEach(
+                    (item) => !searchResult.value.includes(item) ?? searchResult.value.unshift(item)
+                )
+            }
+        })
 }
-onMounted(()=>{
+onMounted(() => {
     categoryFormModel.value.selected = store.getQuestionCategories()
 })
 </script>

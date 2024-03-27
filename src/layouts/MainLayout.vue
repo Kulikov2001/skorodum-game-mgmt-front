@@ -3,9 +3,11 @@
         <LogoComponent />
         <MenuComponent />
         <main>
-            <router-view v-slot="{ Component }">
+            <router-view v-slot="{ Component, route }">
                 <transition name="fade" :duration="150">
-                    <component :is="Component" />
+                    <div :key="route.name">
+                        <component :is="Component" />
+                    </div>
                 </transition>
             </router-view>
         </main>

@@ -1,4 +1,5 @@
-const root = 'http://localhost:8000/api/v1'
+//const root = 'http://localhost:8000/api/v1'
+const root = 'https://api.webmonkeys.ru/api/v1'
 
 const config = {
     root,

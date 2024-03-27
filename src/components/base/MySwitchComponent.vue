@@ -1,5 +1,6 @@
 <template>
-    <div :class="{ active: isChecked }" class="checkbox__wrapper"> <!-- @click="itemClick" -->
+    <div :class="{ active: isChecked }" class="checkbox__wrapper">
+        <!-- @click="itemClick" -->
         <input type="checkbox" hidden v-model="isChecked" />
         <span class="content">
             <slot />

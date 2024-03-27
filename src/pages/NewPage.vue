@@ -1,10 +1,10 @@
 <template>
     <div>
         <NotificationComponent v-model="notification" />
-        <TitleBarComponent :title="'Новая игра'" :back="['Вернуться к списку игр', '/game/all']" />
+        <TitleBarComponent :title="'Новая игра'" :back="['Вернуться к списку игр', '/games']" />
         <NewGameFormComponent />
         <RoundsListComponent />
-        <ButtonsBarComponent :back="true" :save="true" @Save="store.createGame()" />
+        <ButtonsBarComponent @Back="$router.back()" :back="true" :save="true" @Save="store.createGame()" />
     </div>
 </template>
 <script setup lang="ts">

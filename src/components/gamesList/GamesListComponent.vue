@@ -44,9 +44,9 @@ onMounted(() => {
 const handleDownloadBtn = async (_id: number) => {
     store.downloadGame(_id)
 }
-const handleDeleteBtn = async (_id: number) => {
-    await store.deleteGame(_id)
-    await store.getGamesNames()
+const handleDeleteBtn = (_id: number) => {
+     store.deleteGame(_id)
+     store.getGamesNames()
 }
 const handleShareBtn = async (_id: number) => {
     alert('Действие зарезервировано')
