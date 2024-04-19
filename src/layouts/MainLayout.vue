@@ -3,11 +3,9 @@
         <LogoComponent />
         <MenuComponent />
         <main>
-            <router-view v-slot="{ Component, route }">
+            <router-view v-slot="{ Component }">
                 <transition name="fade" :duration="150">
-                    <div :key="route.name">
                         <component :is="Component" />
-                    </div>
                 </transition>
             </router-view>
         </main>
@@ -57,10 +55,10 @@ main {
 }
 </style>
 
-<style v-if="$route.path === '/bank'">
-@media screen and (max-width: 600px) {
-    .main__wrapper.bank {
-        padding: 0 !important;
+<style v-if="$route.path === '/bank' || $route.path === '/new/round'">
+@media screen and (max-width: 700px) {
+    .main__wrapper {
+        padding: .5em !important;
     }
 }
 </style>

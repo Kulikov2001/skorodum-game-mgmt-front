@@ -1,11 +1,18 @@
 <template>
     <div class="wrapper">
-        <input type="file" @change="handleFileChange" ref="fileInput" />
+        <input type="file" @change="handleFileChange" ref="fileInput" hidden/>
         <div v-if="true" class="pick">
             <div class="item">
-                <img src="" alt="" class="ico" />
-                <button @click="selectFile" :color="'var(--main)'">Upload File</button>
-                <!-- vs-button -->
+                <FolderAdd height="32" width="32" />
+                <button @click="selectFile" :color="'var(--main)'">
+                    <Transition>
+                        <span v-if="!isUploading">Выбрать файл</span>
+                    </Transition>
+                        <Transition>
+                        <progress v-if="isUploading" max="100" :value="uploadPercentage"></progress>
+                    </Transition>
+                </button>
+
             </div>
         </div>
         <div v-if="false" class="exist">
@@ -27,11 +34,14 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import axios from 'axios'
+import type {AxiosProgressEvent} from 'axios'
 import { config } from '@/config'
 import MediaPic from '@/assets/MediaPic.vue'
 import type { IMedia } from '@/stores/game'
 import { useGameStore } from '@/stores/game'
+import FolderAdd from "@/assets/FolderAdd.vue";
 const store = useGameStore()
+const isUploading = ref(false);
 const props = defineProps<{
     role: IRole
 }>()
@@ -67,6 +77,7 @@ const qmedia: IMedia = {
         player_displayed: false
     }
 }
+const uploadPercentage = ref(0);
 const fileInput = ref<any>(null)
 const selectedFile = ref<any>(null)
 const uploadSuccess = ref<boolean>(false)
@@ -77,38 +88,64 @@ const fileName = computed(() => {
     return 'supermedia'
 })
 
-const handleFileChange = () => {
-    const _fileInput = fileInput.value.files[0]
 
-    const ext = _fileInput[_fileInput.name.split('.').length - 1].toLowerCase()
-
-    if (VIDEO_EXTENSTION.map((allowed: string) => allowed === ext).includes(true)) {
-        handleFileUpload()
-    } else if (_fileInput.name.split('.') in PHOTO_EXTENSTION) {
-        handleFileUpload()
-    }
-
-    console.log(selectedFile.value)
-}
 const selectFile = async () => {
     await fileInput.value.click()
 }
 const handleFileUpload = async () => {
+    isUploading.value = true;
     const formData = new FormData()
     formData.append('file', selectedFile.value)
 
     try {
-        const response = await axios.post(config.urls.upload.a, formData, {
+        const response = await axios.post(config.urls.upload.c, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
+            },
+                onUploadProgress: function(progressEvent: AxiosProgressEvent) {
+                    uploadPercentage.value = parseInt(String(Math.round((progressEvent.loaded / progressEvent.total!) * 100)));
+                }.bind(this),
             }
+        ).then(function(res){
+            uploadedFile.value = res.data.file
+            uploadSuccess.value = true
+            console.log('SUCCESS!!');
+            //store.propagandeMedia(filename)
         })
-        uploadSuccess.value = true
-        uploadedFile.value = response.data.file
+            .catch(function(){
+                store.globalNotification.type = "error"
+                store.globalNotification.isFixed = true;
+                store.globalNotification.message = "Ошибка при загрузке файла. Подробности в консоли"
+            });
+
     } catch (error) {
         console.error(error)
+    } finally {
+        isUploading.value = false;
     }
 }
+const handleFileChange = () => {
+    selectedFile.value = fileInput.value.files[0]
+
+    //const ext = selectedFile.value[selectedFile.value.name.split('.').length - 1].toLowerCase()
+    try{
+        handleFileUpload()
+    } catch (e) {
+        console.error(e)
+    }
+
+    // if (VIDEO_EXTENSTION.map((allowed: string) => allowed === ext).includes(true)) {
+    //     handleFileUpload()
+    // } else if (selectedFile.value.name.split('.') in PHOTO_EXTENSTION) {
+    //     handleFileUpload()
+    // } else {
+    //     console.error('no one')
+    //     handleFileUpload()
+    // }
+
+    console.log(selectedFile.value)
+}
+
 </script>
 <style scoped>
 .wrapper {
@@ -120,5 +157,17 @@ const handleFileUpload = async () => {
 
 input[type='file'] > input[type='button'] {
     color: greenyellow;
+}
+.item{
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-items: center;
+    align-items: center;
+    gap: 1em;
+}
+progress{
+    accent-color: var(--success-notification-bg);
+    min-height: 2em;
 }
 </style>

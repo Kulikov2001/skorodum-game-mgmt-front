@@ -15,10 +15,13 @@
 import QuestionCard from '@/components/question/QuestionCardComponent.vue'
 import { useGameStore } from '@/stores/game'
 import type { IQuestion } from '@/stores/game'
-import { ref } from 'vue'
+import { ref,watch } from 'vue'
 const store = useGameStore()
 
-const roundQuestions = ref<any>(store.currentRound.questions)
+const roundQuestions = ref<IQuestion[]>(store.currentRound.questions ?? [])
+watch(store.currentRound.questions ?? [], (updatedQuestions) => {
+    roundQuestions.value = updatedQuestions
+})
 const mockquestionround = [
     {
         question: 'Как называется наш проект?',

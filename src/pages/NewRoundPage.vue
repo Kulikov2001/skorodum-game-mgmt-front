@@ -42,7 +42,8 @@ import AccordionItem from '@/components/Accordion/AccordionComponent.vue'
 import { onMounted, ref } from 'vue'
 import RoundQuestionComponent from '@/components/newRound/ListRoundQuestion.vue'
 import BankQuestionComponent from '@/components/question/BankQuestionComponent.vue'
-import { useGameStore } from '@/stores/game'
+import { useGameStore} from '@/stores/game'
+import type {IRound} from '@/stores/game'
 import NotificationComponent from '@/components/base/NotificationComponent.vue'
 
 const store = useGameStore()
@@ -54,10 +55,17 @@ const toggleAccordion = (val: string) => {
         activeAccordionElem.value.push(val)
     }
 }
+
 const handleSave = () => {
     try {
         store.currentGame.rounds = store.currentGame.rounds ?? []
-        store.currentGame.rounds.push(store.currentRound)
+        const duplicate: number = store.currentGame.rounds.findIndex(round => round.settings.name === store.currentRound.settings.name)
+        if (duplicate !== -1) {
+            store.currentGame.rounds[duplicate] = store.currentRound
+        } else {
+            store.currentGame.rounds.push(store.currentRound)
+        }
+
         store.globalNotification.message = 'Раунд добавлен в игру'
         store.globalNotification.type = 'success'
     } catch (e) {

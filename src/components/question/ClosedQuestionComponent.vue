@@ -13,7 +13,7 @@
             <li v-for="n in count" :key="n">
                 <span class="number">{{ n }}.</span>
                 <InputComponent class="question-field" v-model.lazy="answerText[n - 1]" />
-                <MyCheckboxComponent v-model="correctAnswer[n - 1]" />
+                <MyCheckboxComponent @tapped="handleCorrectClick(n-1)" :active="correctAnswer[n-1]" />
             </li>
         </ol>
         <CategoryFormComponent v-model="categoryForm" />
@@ -49,7 +49,7 @@ import { config } from '@/config'
 import axios from 'axios'
 const count = ref<number>(4)
 const answerText = ref<string[]>([])
-const correctAnswer = ref<boolean[]>([])
+const correctAnswer = ref<boolean[]>([false,false,false,false])
 const store = useGameStore()
 const categoryForm = ref<{
     selected: ICategory[]
@@ -58,6 +58,9 @@ const categoryForm = ref<{
     selected: [],
     searchText: ''
 })
+const handleCorrectClick = async(n: number) => {
+    correctAnswer.value[n] === true ? correctAnswer.value[n] = false : correctAnswer.value[n] = true
+}
 onMounted(() => {
     if (store.currentQuestion.answers) {
         count.value =
@@ -91,8 +94,9 @@ const handleAddCategory = () => {
         axios
             .post(config.urls.create.category, { name: categoryForm.value?.searchText })
             .then((res) => {
-                store.setCategories()
-                categoryForm.value!.selected.push(res.data)
+                store.setCategories().then(() => {
+                    categoryForm.value!.selected.push(res.data)
+                })
             })
             .catch((error) => {
                 store.globalNotification.message = error.message

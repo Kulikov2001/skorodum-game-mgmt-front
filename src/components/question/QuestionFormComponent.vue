@@ -12,7 +12,8 @@
         <li v-for="n in count" :key="n">
             <span class="number">{{ n }}.</span>
             <InputComponent class="question-field" v-model.lazy="answerText[n - 1]" />
-            <MyCheckboxComponent v-model="correctAnswer[n - 1]" />
+            <MyCheckboxComponent :active="correctAnswer[n-1]"
+                                 @tapped="correctAnswer[n-1] = !correctAnswer[n-1]" />
         </li>
     </ol>
 </template>

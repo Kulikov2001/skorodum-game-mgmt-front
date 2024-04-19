@@ -114,6 +114,18 @@
             margin: 0.5em;
         }
     }
+    .features{
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        flex-direction: column;
+
+    }
+    .features .wrapper{
+        margin:1em auto;
+        width: 100%;
+        justify-content: center;
+    }
 }
 </style>
 <script setup lang="ts">

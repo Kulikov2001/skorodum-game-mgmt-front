@@ -1,6 +1,10 @@
 <template>
     <div class="wrapper">
         <div class="generic__wrapper">
+            <div class="generic__btn">
+                <EditableIco />
+                <DeleteBtn />
+            </div>
             <div class="generic__type1">Раунд</div>
             <div class="generic__type2">Тестовый раунд</div>
             <div class="desk">
@@ -37,12 +41,17 @@
             </ul>
         </div>
         <QuestionCard
+                class="qcard"
             v-for="(item, key) in currentRound.questions"
             :key="key"
             :title="item.question"
             :answers="item.answers ?? []"
             :correct="item.correct_answer ?? ''"
         />
+        <div class="btns">
+            <ButtonComponent @click="handleEditRound" class="green white-bg">Редактировать раунд</ButtonComponent>
+            <ButtonComponent @click="handleDeleteRound" class="red white-bg">Удалить раунд</ButtonComponent>
+        </div>
     </div>
 </template>
 
@@ -51,46 +60,52 @@ import QuestionCard from '@/components/question/QuestionCardComponent.vue'
 import { useGameStore } from '@/stores/game'
 import type { IRound } from '@/stores/game'
 import { onMounted, computed } from 'vue'
+import DeleteBtn from "@/assets/DeleteBtn.vue";
+import EditableIco from "@/assets/EditableIco.vue";
+import ButtonsBarComponent from "@/components/base/ButtonsBarComponent.vue";
+import ButtonComponent from "@/components/base/ButtonComponent.vue";
+import {useRouter} from "vue-router";
 const store = useGameStore()
-
-// const date = computed(() => {
-//     return store.currentGame.game_info.date ?? '01.01.2024';
-// });
+const router = useRouter();
 const props = defineProps<{
     currentRound: IRound
 }>()
-//alert(JSON.stringify(props.currentRound));
-console.log(props.currentRound)
-const qmock = [
-    {
-        title: 'Вопрос на миллион',
-        answers: ['Первый', 'Второй', 'Третий', 'Четвертый'],
-        correct: 2
-    },
-    {
-        title: 'Вопрос на миллион',
-        answers: ['Первый', 'Второй', 'Третий', 'Четвертый'],
-        correct: 2
-    },
-    {
-        title: 'Вопрос на миллион',
-        answers: ['Первый', 'Второй', 'Третий', 'Четвертый'],
-        correct: 2
-    },
-    {
-        title: 'Вопрос на миллион',
-        answers: ['Первый', 'Второй', 'Третий', 'Четвертый'],
-        correct: 2
-    }
-]
+const handleEditRound = async()=>{
+    router.push('/new/round');
+    store.editRound(props.currentRound)
+}
+const handleDeleteRound = async()=>{
+    store.deleteRound(props.currentRound.id!)
+}
 </script>
 
 <style scoped>
+.qcard{
+    background: white;
+}
+.wrapper{
+    width: 100%;
+    padding: 1em;
+    border-radius: 2em;
+    margin: 3rem auto;
+}
 .generic__wrapper {
     text-align: center;
     margin: 0 auto;
+    padding: 2em;
     width: 100%;
     color: var(--text-darker);
+    position: relative;
+}
+.generic__btn{
+    position: absolute;
+    right: 2.5em;
+    top: 2em;
+    opacity: .5;
+}
+.generic__btn > *{
+    margin-left: 1em;
+    scale: .8;
 }
 .generic__type1 {
     font-size: 1.2em;

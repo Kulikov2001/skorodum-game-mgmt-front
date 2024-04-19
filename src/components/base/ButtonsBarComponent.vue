@@ -49,7 +49,7 @@ const emit = defineEmits<{
     (e: 'Download'): void
     (e: 'Share'): void
 }>()
-const saveForAll = ref(false)
+const saveForAll = ref(true)
 </script>
 <style scoped>
 .row {
@@ -87,6 +87,17 @@ button:nth-child(even) {
 .row {
     display: flex;
     flex-direction: row;
+}
+@media screen and (max-width: 700px){
+    .row{
+        flex-direction: column;
+        gap: 30px;
+        justify-content: center;
+        align-items: center;
+    }
+    .row button{
+        margin: .5em;
+    }
 }
 .left {
     /* background-color: aqua; */

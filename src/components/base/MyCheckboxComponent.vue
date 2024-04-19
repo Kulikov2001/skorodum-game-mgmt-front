@@ -1,7 +1,7 @@
 <template>
     <input type="checkbox" hidden v-model="isChecked" />
     <div class="checkbox__wrapper">
-        <div class="myCheckbox" @click="handleCheckboxClick">
+        <div class="myCheckbox" @click="emit('tapped')">
             <CheckboxBox class="cbox" :class="{ checked: isChecked }" />
             <CheckElem v-if="isChecked" class="checkmark" :class="{ checked: isChecked }" />
         </div>
@@ -49,10 +49,19 @@
 <script setup lang="ts">
 import CheckboxBox from '@/assets/CheckboxBox.vue'
 import CheckElem from '@/assets/CheckElem.vue'
-import { ref } from 'vue'
-const isChecked = defineModel<boolean>({ default: false })
-
-const handleCheckboxClick = () => {
-    isChecked.value = !isChecked.value
-}
+import {ref, watch} from 'vue'
+//const isChecked = defineModel<boolean>({ default: false })
+const isChecked = ref(false);
+const emit = defineEmits<{
+    (e: 'tapped'): void
+}>();
+const props = defineProps<{
+    active: boolean;
+}>();
+watch(()=> props.active, (newVal) => {
+    isChecked.value = newVal
+})
+// const handleCheckboxClick = () => {
+//     isChecked.value = !isChecked.value
+// }
 </script>

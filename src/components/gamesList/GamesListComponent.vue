@@ -1,5 +1,6 @@
 <template>
     <NotificationComponent v-model="store.globalNotification" />
+    <UploadJSON @reloadrequired="store.getGamesNames()"/>
     <div class="wrapper">
         <ol class="list">
             <li v-for="(item, key) in store.allGames" :key="key" class="list__item">
@@ -10,6 +11,7 @@
                         <span v-if="item.isDraft" class="draft">черновик</span>
                     </div>
                     <div class="btns__wrapper">
+                        <a style="color: var(--main);" download :href="config.urls.download.word + item.id + '/'">Word</a>
                         <span @click="handleDownloadBtn(item.id)" class="btn download"
                             ><DownloadBtn width="19"
                         /></span>
@@ -34,13 +36,17 @@ import { useGameStore } from '@/stores/game'
 import { onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import NotificationComponent from '@/components/base/NotificationComponent.vue'
+import UploadJSON from "@/components/base/UploadJSON.vue";
+import {config} from "@/config";
 const store: any = useGameStore()
 const router = useRouter()
-
+//const myconfig = config;
 onMounted(() => {
     store.getGamesNames()
 })
-
+const handleWordBtn = async(_id: number) => {
+    await store.downloadWordGame(_id)
+}
 const handleDownloadBtn = async (_id: number) => {
     store.downloadGame(_id)
 }

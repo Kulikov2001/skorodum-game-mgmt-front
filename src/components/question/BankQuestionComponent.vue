@@ -10,30 +10,42 @@
                 />
             </div>
             <div class="option">
-                <MyCheckboxComponent />
+                <MyCheckboxComponent
+                        :active="isOpened"
+                        @tapped="isOpened = !isOpened"
+                />
                 <span>Открытый вопрос</span>
             </div>
             <div class="option">
-                <MyCheckboxComponent />
+                <MyCheckboxComponent
+                        :active="isClosed"
+                        @tapped="isClosed = !isClosed"
+                />
                 <span>Закрытый вопрос</span>
             </div>
             <div class="option">
-                <MyCheckboxComponent />
+                <MyCheckboxComponent
+                        :active="isPhoto"
+                        @tapped="isPhoto = !isPhoto"
+                />
                 <span>Вопрос-фото</span>
             </div>
         </div>
         <div class="wrapper__list">
             <ul class="question__list">
                 <li
-                    v-for="item in questionList"
+                    v-for="item in questionList.slice(0,5)"
                     :key="item.id"
                     class="question__list-item"
                 >
                     <!-- TODO: Оживить чекбокс и v-for -->
-                    <MyCheckboxComponent style="flex-grow: 0; flex-shrink: 12" />
+                    <MyCheckboxComponent
+                            :active="selectedQuestions.some((checked) => checked === item.id)"
+                            @tapped="handleCheckboxClick(item)"
+                            style="flex-grow: 0; flex-shrink: 12;" />
                     <div class="question__info">
                         <div class="row question">
-                            <div class="question__title">{{  item.question }}</div>
+                            <div class="question__title">{{ item.question }}</div>
                         </div>
                         <div class="row categories">
                             <div
@@ -60,71 +72,45 @@
                 </li>
             </ul>
         </div>
+        <ButtonsBarComponent :add="true" @Add="addSelectedQuestions" />
     </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import {computed, onMounted, ref} from 'vue'
 import SearchFieldComponent from '@/components/base/SearchFieldComponent.vue'
 import MyCheckboxComponent from '@/components/base/MyCheckboxComponent.vue'
 import AttachmentIco from '@/assets/AttachmentIco.vue'
 import EditableIco from '@/assets/EditableIco.vue'
 import DeleteBtn from '@/assets/DeleteBtn.vue'
-import type { IQuestion } from '@/stores/game'
+import type {BIQuestion, IQuestion} from '@/stores/game'
 import {CLEAN_QUESTION, useGameStore} from '@/stores/game'
 import axios from 'axios'
 import { config } from '@/config'
 import type { ICategory } from '@/components/question/CategoryFormComponent.vue'
+import ButtonsBarComponent from "@/components/base/ButtonsBarComponent.vue";
+const store = useGameStore();
+const questionList = ref<IQuestion[]>([]);
+store.getQuestions().then((q)=> questionList.value = q)
+const isOpened = ref(false);
+const isClosed = ref(false);
+const isPhoto = ref(false);
 
-const questionList = ref<any[]>([]);
 
-
-const getQuestions = (): Promise<any> => {
-    return axios
-        .get(config.urls.get.all.questions)
-        .then((res: any) => {
-            const result: IQuestion[] = [];
-            res.data.forEach((el: any) => {
-                const temp: IQuestion = {
-                    id: el.id,
-                    type: el.question_type,
-                    question: el.question_text,
-                    answers: el.answers.split(',') /*TODO: Изменить сепоратор на ;*/,
-                    correct_answer: el.correct_answer,
-                    time_to_answer: el.time_to_answer,
-                    media_data: {
-                        show_image: el.show_image,
-                        video: {
-                            before: el.video_before,
-                            after: '' /*TODO: Сделать на беке*/
-                        },
-                        image: {
-                            before: el.image_before,
-                            after: el.image_after,
-                            player_displayed: el.player_display
-                        }
-                    },
-                    categories: []
-                };
-                result.push(temp)
-            })
-            return result
-        })
-        .catch((error: any) => {
-            console.error(error)
-            // globalNotification.value.message = error.message
-            // globalNotification.value.isFixed = true
-            // globalNotification.value.type = 'error'
-        })
-    //console.log(result);
+const selectedQuestions = ref<number[]>([])
+const addSelectedQuestions = async() => {
+    return 0;
+    // const question = [];
+    // await selectedQuestions.value.forEach((id)=>{
+    //     axios.get(config.urls.get.question + id + '/').then((res)=>{
+    //         if (res.status === 200){
+    //             res.data.
+    //             question.push(res.data)
+    //         }
+    //     })
+    // });
+    // store.currentRound.questions.push(question) ?? store.currentRound.question = question
 }
-// const emit = defineEmits<{
-//     (e: 'titleClick'): void
-// }>()
-// const emitTitleClick = () => {
-//     emit('titleClick')
-// }
-const selectedQ = ref<number[]>([])
 const searchText = ref<string>('')
 const handleChange = async () => {
     // axios.get(
@@ -136,29 +122,24 @@ const handleChange = async () => {
     //     }
     // })
 }
-const handleDelete = async (question: IQuestion) => {
-    axios
-        .delete(config.urls.delete.question + question.id + '/')
-        .then((res) => {
-            questionList.value = getQuestions()
-        })
-        .catch((err) => {
-            console.error(err)
-        })
+const handleCheckboxClick = async(triggered: IQuestion) => {
+    if (selectedQuestions.value.some((item) => item === triggered.id)) {
+        selectedQuestions.value = selectedQuestions.value.filter((already) => already !== triggered.id);
+    } else {
+        if (typeof triggered.id === 'number') {
+            selectedQuestions.value.push(triggered.id);
+        }
+    }
 }
-// const toggleQ = (q: any) => {
-//     if (selectedQ.value.includes(q)){
-//         selectedQ.value = selectedQ.value.filter(item => item != q);
-//     }
-//     else {
-//         selectedQ.value.push(q);
-//     }
-// }
-onMounted(() => {
-    getQuestions().then((result)=>{
-        questionList.value = result;
-    })
-})
+const handleDelete = async (question: IQuestion) => {
+    try{
+        await axios.delete(config.urls.delete.question + question.id + '/')
+    } catch (e) {
+        console.error(e)
+    }
+}
+
+
 </script>
 
 <style scoped>
