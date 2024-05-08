@@ -20,7 +20,7 @@
         <aside>
             <h2>Категории:</h2>
             <CategoryFormComponent />
-            <div class="createQuestion__btn">
+            <div @click="$router.push('/bank/new-question')" class="createQuestion__btn">
                 <AddCircleIn class="createQuestion__icon" />
                 <div class="createQuestion__btn-title">Создать новый вопрос</div>
             </div>
@@ -36,6 +36,15 @@ import DocDown from '@/assets/DocDown.vue'
 </script>
 
 <style scoped>
+.wrapper{
+    margin-top: 2em;
+}
+article{
+    margin-top: 1em;
+}
+aside{
+    padding: 1em;
+}
 .createQuestion__btn-title {
     margin-bottom: 3em;
 }

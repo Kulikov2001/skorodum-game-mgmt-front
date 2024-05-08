@@ -1,7 +1,7 @@
 <template>
     <div class="wrapper">
         <textarea v-model="textarea"></textarea>
-        <buttons-bar-component :add="true" @add="handleSave"/>
+
     </div>
 
 </template>
@@ -37,12 +37,4 @@ textarea{
 </style>
 
 <script setup lang="ts">
-
-import {ref} from "vue";
-import ButtonsBarComponent from "@/components/base/ButtonsBarComponent.vue";
-
-const textarea = ref('asdasd');
-const handleSave = async()=>{
-    alert('Действие зарезервировано')
-}
 </script>

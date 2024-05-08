@@ -77,6 +77,11 @@ const router = createRouter({
                     path: '/bank/settings',
                     name: 'Настройки категорий',
                     component: () => import('@/pages/CategorySettingsPage.vue')
+                },
+                {
+                    path: '/bank/new-question',
+                    name: 'Создание вопроса',
+                    component: () => import('@/pages/NewQuestionPage.vue')
                 }
             ]
         }
