@@ -33,6 +33,9 @@
         </div>
         <div class="wrapper__list">
             <ul class="question__list">
+                <li v-if="questionList.length === 0">
+                    Ничего не найдено
+                </li>
                 <li
                     v-for="item in questionList.slice(0,5)"
                     :key="item.id"
@@ -77,7 +80,7 @@
 </template>
 
 <script setup lang="ts">
-import {computed, onMounted, ref} from 'vue'
+import {computed, onMounted, ref, watch, watchEffect} from 'vue'
 import SearchFieldComponent from '@/components/base/SearchFieldComponent.vue'
 import MyCheckboxComponent from '@/components/base/MyCheckboxComponent.vue'
 import AttachmentIco from '@/assets/AttachmentIco.vue'
@@ -92,8 +95,17 @@ import ButtonsBarComponent from "@/components/base/ButtonsBarComponent.vue";
 const store = useGameStore();
 const questionList = ref<IQuestion[]>([]);
 store.getQuestions().then((q)=> questionList.value = q)
-const isOpened = ref(false);
-const isClosed = ref(false);
+const isOpened = ref<boolean>(false);
+const isClosed = ref<boolean>(false);
+const textType = computed(()=>{
+    if (isOpened.value  && !isClosed.value ) {
+        return 'text'
+    } else if (!isOpened.value  && isClosed.value ){
+        return 'select'
+    } else {
+        return ''
+    }
+})
 const isPhoto = ref(false);
 
 
@@ -112,6 +124,19 @@ const addSelectedQuestions = async() => {
     // store.currentRound.questions.push(question) ?? store.currentRound.question = question
 }
 const searchText = ref<string>('')
+watch(searchText, async(newVal: string)=> {
+    if (newVal.length > 1) {
+        store.searchQuestions({
+            question_text: newVal,
+            question_type: textType.value,
+            isPhoto: isPhoto.value
+        }).then((q) => {
+            questionList.value = q
+        })
+    } else {
+        store.getQuestions().then((q)=>questionList.value = q);
+    }
+});
 const handleChange = async () => {
     // axios.get(
     //     config.urls.search.question + '?query=' + encodeURIComponent(searchText.value)

@@ -49,7 +49,7 @@ const config = {
         },
         search: {
             categories: `${root}/search-categories/`,
-            question: `${root}/`
+            question: `${root}/question-search/`,
         }
     }
 }

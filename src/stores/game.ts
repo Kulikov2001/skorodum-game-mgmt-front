@@ -1,5 +1,6 @@
 import { ref } from 'vue'
 import { defineStore } from 'pinia'
+import {VIDEO_EXTENSION, PHOTO_EXTENSION} from '@/components/base/AllowedExtension'
 import axios from 'axios'
 import { config } from '@/config'
 import type { INotification } from '@/components/base/NotificationComponent.vue'
@@ -92,6 +93,11 @@ interface IGame {
         skip_emails: boolean
     }
     rounds?: IRound[]
+}
+export interface IQuestionSearchQuery {
+    question_text?: string
+    question_type?: string
+    isPhoto?: boolean
 }
 export interface IRound {
     id?: number
@@ -228,40 +234,60 @@ export const useGameStore = defineStore('game', () => {
     const removeRoundAtIndex = async (index: number) => {
         currentGame.value.rounds!.splice(index, 1).concat(currentGame.value.rounds!.slice(-index));
     }
-    const propagandeMedia = async (filename: string,position: string, type: string, questionId?: number ) => {
+    const setCurrQMedia = async (file: any) => {
+        (!currentQuestion.value.media_data) ? currentQuestion.value.media_data = CLEAN_MEDIA : null
+        if (file.role.type === 'photo') {
+            currentQuestion.value.media_data.show_image = true;
+        }
+        const name = decodeURI(file.file.split('/')[file.file.split('/').length - 1]);
+        const extension = name.split('.')[name.split('.').length - 1];
+        if ((VIDEO_EXTENSION.indexOf(extension) > -1) && file.role.position === 'before') {
+            currentQuestion.value.media_data.video.before = file.file
+        } else if ((VIDEO_EXTENSION.indexOf(extension) > -1) && file.role.position === 'after') {
+            currentQuestion.value.media_data.video.after = file.file
+        } else if ((PHOTO_EXTENSION.indexOf(extension) > -1) && file.role.position === 'before') {
+            currentQuestion.value.media_data.image.before = file.file
+        } else if ((PHOTO_EXTENSION.indexOf(extension) > -1) && file.role.position === 'after') {
+            currentQuestion.value.media_data.image.after = file.file
+        }
+    }
+    const propagandeMedia = async (filename: string, position: string, type: string, questionId?: number) => {
         const name = filename.split('/')[filename.split('/').length - 1];
         const extension = name.split('.')[name.split('.').length - 1];
         if (questionId) {
             axios.get(config.urls.get.question + questionId).then((res) => {
-               if (res.status === 200){
-                   const payload: {[key: string]: any} = { question_type: res.data.question_type, question_text: res.data.question_text};
-                   if (extension ==='mp4' && position === 'before'){
-                       payload.video_before = filename
-                   } else if (extension === 'mp4' && position === 'after'){
-                       payload.video_after = filename
-                   } else if ((extension === 'jpg' || extension === 'png' || extension === 'jpeg' || extension === 'jpg') && position === 'after'){
-                       payload.image_after = filename
-                   } else if ((extension === 'jpg' || extension === 'png' || extension === 'jpeg' || extension === 'jpg') && position === 'before'){
-                       payload.image_before = filename
-                   }
-                   axios.put(config.urls.update.question + res.data.id + '/', payload).then(function (res) {
-                       if (res.status === 200){
-                           //TODO: Cоздат
-                       }
-                   });
-               }
+                if (res.status === 200) {
+                    const payload: { [key: string]: any } = {
+                        question_type: res.data.question_type,
+                        question_text: res.data.question_text
+                    };
+                    if (extension === 'mp4' && position === 'before') {
+                        payload.video_before = filename
+                    } else if (extension === 'mp4' && position === 'after') {
+                        payload.video_after = filename
+                    } else if ((extension === 'jpg' || extension === 'png' || extension === 'jpeg' || extension === 'jpg') && position === 'after') {
+                        payload.image_after = filename
+                    } else if ((extension === 'jpg' || extension === 'png' || extension === 'jpeg' || extension === 'jpg') && position === 'before') {
+                        payload.image_before = filename
+                    }
+                    axios.put(config.urls.update.question + res.data.id + '/', payload).then(function (res) {
+                        if (res.status === 200) {
+                            //TODO: Cоздат
+                        }
+                    });
+                }
             });
         } else {
-            if(!currentQuestion.value.media_data){
+            if (!currentQuestion.value.media_data) {
                 currentQuestion.value.media_data = CLEAN_MEDIA
             }
-            if (extension ==='mp4' && position === 'before'){
-                currentQuestion.value.media_data.video.before= filename
-            } else if (extension === 'mp4' && position === 'after'){
+            if (extension === 'mp4' && position === 'before') {
+                currentQuestion.value.media_data.video.before = filename
+            } else if (extension === 'mp4' && position === 'after') {
                 currentQuestion.value.media_data.video.after = filename
-            } else if ((extension === 'jpg' || extension === 'png' || extension === 'jpeg' || extension === 'jpg') && position === 'after'){
+            } else if ((extension === 'jpg' || extension === 'png' || extension === 'jpeg' || extension === 'jpg') && position === 'after') {
                 currentQuestion.value.media_data.image.after = filename
-            } else if ((extension === 'jpg' || extension === 'png' || extension === 'jpeg' || extension === 'jpg') && position === 'before'){
+            } else if ((extension === 'jpg' || extension === 'png' || extension === 'jpeg' || extension === 'jpg') && position === 'before') {
                 currentQuestion.value.media_data.image.before = filename
             }
         }
@@ -282,6 +308,50 @@ export const useGameStore = defineStore('game', () => {
                 globalNotification.value.type = 'error'
                 //setTimeout(() => getGame(_id), 1500)
             })
+    }
+
+
+    const searchQuestions = async (queryParams: IQuestionSearchQuery): Promise<IQuestion[]> => {
+        let isPhoto = '';
+        const questionType = queryParams.question_type ?? '';
+        const questionText = queryParams.question_text ?? '';
+        if (queryParams.isPhoto) {
+            isPhoto = queryParams.isPhoto.toString().substring(0, 1).toUpperCase() + queryParams.isPhoto.toString().substring(1);
+        }
+        const res = await axios.get(config.urls.search.question + '?query=' + encodeURI(questionText) + '&type=' + questionType + '&photo=' + isPhoto)
+        if (res.status === 200) {
+            try{
+            const result: IQuestion[] = res.data.results.map((el: BIQuestion) => {
+                return {
+                    id: el.id,
+                    type: el.question_type,
+                    question: el.question_text,
+                    answers: el.answers.split(','), // Changed separator to semicolon
+                    correct_answer: el.correct_answer,
+                    time_to_answer: el.time_to_answer,
+                    media_data: {
+                        show_image: el.show_image,
+                        video: {
+                            before: el.video_before,
+                            after: '' // Set to empty string, backend to handle this
+                        },
+                        image: {
+                            before: el.image_before,
+                            after: el.image_after,
+                            player_displayed: el.player_display
+                        }
+                    },
+                    categories: el.category
+                };
+            });
+            return result;
+            } catch (e) {
+                console.error(e);
+                return []
+            }
+        } else {
+            return []
+        }
     }
     const createGame = async () => {
         const prepared = {
@@ -401,7 +471,7 @@ export const useGameStore = defineStore('game', () => {
                     categories: el.category
                 };
             });
-            console.log(result)
+            //console.log(result)
             return result;
         } catch (e) {
             console.error(e);
@@ -584,6 +654,8 @@ export const useGameStore = defineStore('game', () => {
         mapBIQuestionToIQuestions,
         addCurrentQuestionToCurrentRound,
         removeRoundAtIndex,
-        propagandeMedia
+        propagandeMedia,
+        setCurrQMedia,
+        searchQuestions,
     }
 })

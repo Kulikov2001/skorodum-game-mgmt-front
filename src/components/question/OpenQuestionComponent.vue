@@ -1,7 +1,7 @@
 <template>
     <div class="wrapper">
         <textarea v-model="textarea"></textarea>
-
+        <buttons-bar-component v-if="!hideBtn" :add="true" @add="handleSave"/>
     </div>
 
 </template>
@@ -37,4 +37,15 @@ textarea{
 </style>
 
 <script setup lang="ts">
+
+import {ref} from "vue";
+import ButtonsBarComponent from "@/components/base/ButtonsBarComponent.vue";
+const props = defineProps<{
+    hideBtn?: boolean;
+}>();
+const textarea = ref('asdasd');
+const hideBtn = ref<boolean>(props.hideBtn);
+const handleSave = async()=>{
+    alert('Действие зарезервировано')
+}
 </script>

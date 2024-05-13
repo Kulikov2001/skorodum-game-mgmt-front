@@ -11,14 +11,14 @@
         <div class="tab__content-wrapper" v-if="!photoTabOpened">
             <div class="tab__content-item">
                 <h3 align="center">Медиа до вопроса</h3>
-                <FilePicker :role="{ position: 'before' }" />
+                <FilePicker @uploaded="handleUploaded($data)" :role="{ position: 'before' }" />
                 <p class="desc" align="center">
                     Выберите медиа файл для демонстрации перед вопросом
                 </p>
             </div>
             <div class="tab__content-item">
-                <h3 align="center">Медиа до вопроса</h3>
-                <FilePicker :role="{ position: 'after' }" />
+                <h3 align="center">Медиа после вопроса</h3>
+                <FilePicker @uploaded="handleUploaded($data)" :role="{ position: 'after' }" />
                 <p class="desc" align="center">
                     Выберите медиа файл для демонстрации после вопроса
                 </p>
@@ -27,14 +27,14 @@
         <div class="tab__content-wrapper" v-if="photoTabOpened">
             <div class="tab__content-item">
                 <h3 align="center">Медиа до вопроса!!</h3>
-                <FilePicker :role="{ position: 'before' }" />
+                <FilePicker @uploaded="handleUploaded($data)" :role="{ position: 'before', type: 'photo' }" />
                 <p class="desc" align="center">
                     Выберите медиа файл для демонстрации перед вопросом
                 </p>
             </div>
             <div class="tab__content-item">
-                <h3 align="center">Медиа до вопроса</h3>
-                <FilePicker :role="{ position: 'after' }" />
+                <h3 align="center">Медиа после вопроса</h3>
+                <FilePicker @uploaded="handleUploaded($data)" :role="{ position: 'after', type: 'photo' }" />
                 <p class="desc" align="center">
                     Выберите медиа файл для демонстрации после вопроса
                 </p>
@@ -46,10 +46,19 @@
 <script setup lang="ts">
 import FilePicker from '@/components/base/FilePickerComponent.vue'
 import { ref } from 'vue'
+import {useGameStore} from "@/stores/game";
 const photoTabOpened = ref(false)
 const toggleTab = async (val: string) => {
     val === 'photo' ? (photoTabOpened.value = true) : (photoTabOpened.value = false)
 }
+const store = useGameStore();
+const handleUploaded = (data: any)=>{
+    store.setCurrQMedia(data);
+    emit('uploaded', data)
+}
+const emit = defineEmits<{
+    (e: 'uploaded', data: any): void
+}>();
 </script>
 
 <style scoped>

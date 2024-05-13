@@ -22,28 +22,6 @@ const roundQuestions = ref<IQuestion[]>(store.currentRound.questions ?? [])
 watch(store.currentRound.questions ?? [], (updatedQuestions) => {
     roundQuestions.value = updatedQuestions
 })
-const mockquestionround = [
-    {
-        question: 'Как называется наш проект?',
-        answers: [
-            'При помощи весов на станелях заводов',
-            'При помощи лазера',
-            'Рассчитывают по ряду Фурье',
-            'При строительстве масонских лож'
-        ],
-        correct_answer: 'При помощи лазера'
-    },
-    {
-        question: 'Как называется наш проект?',
-        answers: [
-            'При помощи весов на станелях заводов',
-            'При помощи лазера',
-            'Рассчитывают по ряду Фурье',
-            'При строительстве масонских лож'
-        ],
-        correct_answer: 'При помощи лазера'
-    }
-]
 </script>
 
 <style scoped>

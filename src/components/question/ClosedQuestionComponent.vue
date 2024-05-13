@@ -28,6 +28,7 @@
             <!-- vs-button -->
         </div>
         <ButtonsBarComponent
+                v-if="!hideBtn"
             @Add="handleAddQuestion"
             @Cancel="resetQuestion"
             :add="true"
@@ -48,6 +49,10 @@ import Vector4Answers from '@/assets/Vector4Answers.vue'
 import { config } from '@/config'
 import axios from 'axios'
 const count = ref<number>(4)
+const props = defineProps<{
+    hideBtn?: boolean;
+}>();
+const hideBtn = ref<boolean>(props.hideBtn);
 const answerText = ref<string[]>([])
 const correctAnswer = ref<boolean[]>([false,false,false,false])
 const store = useGameStore()

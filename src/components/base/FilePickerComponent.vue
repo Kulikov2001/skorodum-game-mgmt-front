@@ -1,7 +1,7 @@
 <template>
     <div class="wrapper">
         <input type="file" @change="handleFileChange" ref="fileInput" hidden/>
-        <div v-if="true" class="pick">
+        <div v-if="!isMediaExist" class="pick">
             <div class="item">
                 <FolderAdd height="32" width="32" />
                 <button @click="selectFile" :color="'var(--main)'">
@@ -15,7 +15,7 @@
 
             </div>
         </div>
-        <div v-if="false" class="exist">
+        <div v-if="isMediaExist" class="exist">
             <div class="item">
                 <img class="ico" src="" alt="" />
                 <div class="meta">
@@ -23,7 +23,7 @@
                         width="56"
                         style="float: left; margin-right: 1em; vertical-align: text-top"
                     />
-                    <h4>{{ fileName }}</h4>
+                    <h4>{{ decodeURI(isMediaExist.split('/')[isMediaExist.split('/').length - 1]) }}</h4>
                     <div class="size">999KB</div>
                 </div>
                 <img src="" class="delete" alt="" />
@@ -84,14 +84,25 @@ const uploadSuccess = ref<boolean>(false)
 const uploadedFile = ref<string>('')
 const fileType = ref<string>('')
 
-const fileName = computed(() => {
-    return 'supermedia'
-})
-
+const emit = defineEmits<{
+    (e: 'uploaded', data: any): void
+}>();
 
 const selectFile = async () => {
     await fileInput.value.click()
 }
+
+const checkMediaExist = (): string => {
+    switch (props.role.position) {
+        case "before":
+           return store.currentQuestion.media_data?.image.before! ?? store.currentQuestion.media_data?.video.before;
+        case "after":
+            return store.currentQuestion.media_data?.image.after! ?? store.currentQuestion.media_data?.video.after;
+        default:
+            return 'false'
+    }
+}
+const isMediaExist = computed(()=> checkMediaExist());
 const handleFileUpload = async () => {
     isUploading.value = true;
     const formData = new FormData()
@@ -109,10 +120,13 @@ const handleFileUpload = async () => {
         ).then(function(res){
             uploadedFile.value = res.data.file
             uploadSuccess.value = true
-            console.log('SUCCESS!!');
-            //store.propagandeMedia(filename)
+            const result = {...res.data, role : { type: props.role.type, position: props.role.position}}
+            store.setCurrQMedia(result)
+            emit('uploaded',result)
+
         })
-            .catch(function(){
+            .catch(function(e){
+                console.error(e)
                 store.globalNotification.type = "error"
                 store.globalNotification.isFixed = true;
                 store.globalNotification.message = "Ошибка при загрузке файла. Подробности в консоли"

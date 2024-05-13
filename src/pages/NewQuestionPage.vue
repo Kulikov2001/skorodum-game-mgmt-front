@@ -2,14 +2,15 @@
     <div>
         <NotificationComponent v-model="store.globalNotification" />
         <TitleBarComponent :title="'Новый вопрос'" :back="['Вернуться к банку вопросов', '/bank']" />
-        <CreateQuestionComponent :class="{ active: activeAccordionElem.includes('Создать') }" />
+        <CreateQuestionComponent :hideBtn="true" :class="{ active: activeAccordionElem.includes('Создать') }" />
 
         <ButtonsBarComponent
                 @save="handleSave"
-                @reset="handleReset"
+                @cancel="handleCancel"
+                @share="handleShare"
                 :save="true"
-                :reset="true"
-                :to-all="true"
+                :cancel="true"
+                :share="true"
         />
     </div>
 </template>
@@ -52,9 +53,21 @@ const handleSave = () => {
         setTimeout(store.globalNotification.clear, 1500)
     }
 }
-const handleReset = () => {
+const handleCancel = () => {
     store.clearRound()
     store.clearQuestion()
+}
+const handleShare = async() => {
+    const shareData = {
+        title: `${store.currentQuestion.question}`,
+        text: "Посмотри мой вопрос скородум!",
+        url: `${window.location.href}`,
+    };
+    try {
+        await navigator.share(shareData);
+    } catch (e) {
+        console.error(e);
+    }
 }
 </script>
 <style scoped>
