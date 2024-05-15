@@ -12,6 +12,10 @@ function getToday(): string {
     const yyyy = today.getFullYear();
     return yyyy + '-' + mm + '-' + dd;
 }
+export interface IValidationResult {
+    status: boolean;
+    message: string;
+}
 export const CLEAN_MEDIA: IMedia = {
     id: -1,
     show_image: false,
@@ -41,7 +45,8 @@ export const CLEAN_GAME: IGame = {
             team_bet: 0
         },
         skip_emails: false
-    }
+    },
+    rounds: []
 }
 export const CLEAN_ROUND: IRound = {
     type: '',
@@ -51,7 +56,8 @@ export const CLEAN_ROUND: IRound = {
         display_name: false,
         time_to_answer: 0,
         use_special_tactics: false
-    }
+    },
+    questions: []
 }
 export const CLEAN_QUESTION: IQuestion = {
     type: '',
@@ -92,7 +98,7 @@ interface IGame {
         }
         skip_emails: boolean
     }
-    rounds?: IRound[]
+    rounds: IRound[]
 }
 export interface IQuestionSearchQuery {
     question_text?: string
@@ -114,7 +120,7 @@ export interface IRound {
         all_in?: number
         team_bet?: number
     }
-    questions?: IQuestion[]
+    questions: IQuestion[]
 }
 export interface IMedia {
     id?: number
@@ -139,7 +145,7 @@ export interface IQuestion {
     answers?: string[]
     correct_answer?: string
     time_to_answer?: number
-    media_data?: IMedia
+    media_data: IMedia
     categories: ICategory[]
 }
 export interface BIGame {
@@ -177,6 +183,7 @@ export interface BIQuestion {
     id: number
     question_type: string
     question_text: string
+    question?:string
     show_image: boolean
     image_before: string
     image_after: string
@@ -214,6 +221,47 @@ export const useGameStore = defineStore('game', () => {
         // Could work and fix the previous problem, but not in all APIs
         }}
     * **/
+    const validateGame = async() => {
+        const result = {status: false, message: 'Валидация не выполнена'};
+        if (currentGame.value.rounds &&
+            currentGame.value.rounds.length > 0) {
+            if (currentGame.value.rounds[0].questions && currentGame.value.rounds[0].questions.length > 0) {
+                if (currentGame.value.rounds[0].questions[0].answers && currentGame.value.rounds[0].questions[0].answers.length > 0) {
+                    if (currentGame.value.game_info.name.length > 0 ){
+                        result.status = true;
+                        result.message = 'Валидация выполнена';
+                    } else { result.message = 'Не заполнено имя игры';}
+                } else {result.message = 'Не заполнены ответы';}
+            } else {result.message = 'Нет ни одного вопроса';}
+        } else { result.message = 'Нет ни одного раунда';}
+        return result;
+    }
+    const validateRound = async() => {
+        const result = {status: false, message: 'Валидация не выполнена'}
+        if (currentRound.value.type.length > 0) {
+            if (currentRound.value.settings.name.length > 0) {
+                if (currentRound.value.questions && currentRound.value.questions.length > 0) {
+                    if (currentRound.value.questions[0].question.length > 0) {
+                        if (currentRound.value.questions[0].answers && currentRound.value.questions[0].answers.length > 0) {
+                            result.status = true;
+                            result.message = 'Валидация выполнена';
+                        } else {result.message = 'Не заполнены ответы';}
+                    } else {result.message = 'Не заполнен вопрос';}
+                } else {result.message = 'Нет ни одного вопроса';}
+            } else {result.message = 'Не заполнено название раунда';}
+        } else { result.message = 'Не заполнен тип раунда';}
+        return result;
+    }
+    const validateQuestion = async(): Promise<IValidationResult> => {
+        const result: IValidationResult = {status: false, message: 'Валидация не выполнена'}
+        if (currentQuestion.value.question.length > 0) {
+            if (currentQuestion.value.answers && currentQuestion.value.answers.length > 0) {
+                result.status = true;
+                result.message = 'Валидация выполнена';
+            } else {result.message = 'Не заполнены ответы';}
+        } else {result.message = 'Не заполнен вопрос';}
+        return result;
+    }
     const getGamesNames = async () => {
         axios
             .get(config.urls.get.all.games)
@@ -251,6 +299,7 @@ export const useGameStore = defineStore('game', () => {
             currentQuestion.value.media_data.image.after = file.file
         }
     }
+
     const propagandeMedia = async (filename: string, position: string, type: string, questionId?: number) => {
         const name = filename.split('/')[filename.split('/').length - 1];
         const extension = name.split('.')[name.split('.').length - 1];
@@ -326,7 +375,7 @@ export const useGameStore = defineStore('game', () => {
                     id: el.id,
                     type: el.question_type,
                     question: el.question_text,
-                    answers: el.answers.split(','), // Changed separator to semicolon
+                    answers: answerHelper(el.answers),
                     correct_answer: el.correct_answer,
                     time_to_answer: el.time_to_answer,
                     media_data: {
@@ -354,27 +403,33 @@ export const useGameStore = defineStore('game', () => {
         }
     }
     const createGame = async () => {
-        const prepared = {
-            game: {
-                ...currentGame.value
-            }
-        }
-        axios
-            .post(config.urls.create.game, prepared)
-            .then(function (res) {
-                if (res.status === 200 || res.status === 201) {
-                    globalNotification.value.message =
-                        'Игра ' + prepared.game.game_info.name + ' успешно создана'
-                    globalNotification.value.type = 'success'
-                    return true
-                } else {
-                    return null
+        const validation = await validateGame();
+        if (validation.status) {
+            const prepared = {
+                game: {
+                    ...currentGame.value
                 }
-            })
-            .catch(function (error) {
-                globalNotification.value.message = error.message
-                globalNotification.value.type = 'error'
-            })
+            }
+            axios
+                .post(config.urls.create.game, prepared)
+                .then(function (res) {
+                    if (res.status === 200 || res.status === 201) {
+                        globalNotification.value.message =
+                            'Игра ' + prepared.game.game_info.name + ' успешно создана'
+                        globalNotification.value.type = 'success'
+                        return true
+                    } else {
+                        return null
+                    }
+                })
+                .catch(function (error) {
+                    globalNotification.value.message = error.message
+                    globalNotification.value.type = 'error'
+                })
+        } else {
+            globalNotification.value.message = validation.message
+            globalNotification.value.type = 'error'
+        }
     }
     const downloadGame = async (_id: number) => {
         axios
@@ -445,6 +500,38 @@ export const useGameStore = defineStore('game', () => {
     const setQuestionCategories = async (_categories: ICategory[]) => {
         currentQuestion.value.categories = _categories
     }
+    const getQuestion = async (id: number): Promise<IQuestion> => {
+        const res = await axios.get(config.urls.get.question + id + '/')
+        if (res.status === 200) {
+            return {
+                id: id,
+                type: res.data.type,
+                question: res.data.question,
+                answers: answerHelper(res.data.answers),
+                correct_answer: res.data.correct_answer,
+                time_to_answer: res.data.time_to_answer,
+                media_data: {
+                    show_image: res.data.media_data.show_image,
+                    video: {
+                        before: res.data.media_data.video.before,
+                        after: res.data.media_data.video.after
+                    },
+                    image: {
+                        before: res.data.media_data.image.before,
+                        after: res.data.media_data.image.after,
+                        player_displayed: res.data.media_data.image.player_displayed
+                    }
+                },
+                categories: res.data.category ?? []
+            };
+        } else {
+            console.error('Нет данных' + res.data);
+            return CLEAN_QUESTION;
+        }
+    }
+    function answerHelper(answer: string): string[] {
+        return JSON.parse(answer.replace(/'/g, '"'));
+    }
     const getQuestions = async (): Promise<IQuestion[]> => {
         try {
             const res = await axios.get(config.urls.get.all.questions);
@@ -453,7 +540,7 @@ export const useGameStore = defineStore('game', () => {
                     id: el.id,
                     type: el.question_type,
                     question: el.question_text,
-                    answers: el.answers.split(','), // Changed separator to semicolon
+                    answers: answerHelper(el.answers),
                     correct_answer: el.correct_answer,
                     time_to_answer: el.time_to_answer,
                     media_data: {
@@ -560,15 +647,17 @@ export const useGameStore = defineStore('game', () => {
                         team_bet: 0
                     },
                     skip_emails: false
-                }
+                },
+                rounds: []
             }
+
         })
     }
     function mapBIGameToIGame(data: BIGame): IGame {
         return {
             id: data.id ?? -1,
             game_info: {
-                name: data.name ?? '',
+                name: data.name ?? CLEAN_GAME.game_info.name,
                 theme: data.theme ?? '',
                 client: data.client ?? '',
                 date: data.date ?? ''
@@ -607,8 +696,8 @@ export const useGameStore = defineStore('game', () => {
         return dataArray.map((el) => ({
                 id: el.id?? -1,
                 type: el.question_type?? '',
-                question: el.question_text?? '',
-                answers: el.answers.split(',') ?? ['','','','']  /*TODO: Изменить сепоратор на ;*/,
+                question: el.question?? '',
+                answers: answerHelper(el.answers)?? [],
                 correct_answer: el.correct_answer?? '',
                 time_to_answer: el.time_to_answer?? 0,
                 media_data: {
@@ -626,12 +715,55 @@ export const useGameStore = defineStore('game', () => {
                 categories: el.category?? []
         }));
     }
+
+    const updateQuestion = async(id: number) => {
+        const res = await axios.put(config.urls.update.question + id + '/',  {
+                question_type: currentQuestion.value.type,
+                question_text: currentQuestion.value.question,
+                answers: currentQuestion.value.answers!.toString() ?? '[]',
+                category: currentQuestion.value.categories,
+                image_before: currentQuestion.value.media_data!.image.before??'',
+                image_after: currentQuestion.value.media_data!.image.after??'',
+                video_before: currentQuestion.value.media_data!.video.before,
+                video_after: currentQuestion.value.media_data!.video.after,
+                player_display: currentQuestion.value.media_data!.image.player_displayed,
+                time_to_answer: currentQuestion.value.time_to_answer,
+                correct_answer: currentQuestion.value.correct_answer,
+            });
+        return res.data;
+    }
+    const createQuestion = async() => {
+        const validation = await validateQuestion();
+        if (validation.status) {
+            const res = await axios.post(config.urls.create.question, Object(currentQuestion.value).map((el: IQuestion) => {
+                return {
+                    question_type: el.type,
+                    question_text: el.question,
+                    answers: el.answers!.toString() ?? '[]',
+                    category: el.categories,
+                    image_before: el.media_data!.image.before ?? '',
+                    image_after: el.media_data!.image.after ?? '',
+                    video_before: el.media_data!.video.before,
+                    video_after: el.media_data!.video.after,
+                    player_display: el.media_data!.image.player_displayed,
+                    time_to_answer: el.time_to_answer,
+                    correct_answer: el.correct_answer,
+                }
+            }));
+            return res.data;
+        } else {
+            globalNotification.value.message = validation.message;
+            globalNotification.value.type = 'error';
+        }
+    }
     return {
         currentGame,
         globalNotification,
         getQuestions,
         getGamesNames,
         downloadGame,
+        updateQuestion,
+        createQuestion,
         deleteGame,
         deleteRound,
         getGame,
@@ -657,5 +789,9 @@ export const useGameStore = defineStore('game', () => {
         propagandeMedia,
         setCurrQMedia,
         searchQuestions,
+        getQuestion,
+        validateGame,
+        validateRound,
+        validateQuestion,
     }
 })

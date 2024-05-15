@@ -38,6 +38,7 @@ const config = {
             category: `${root}/delete-category/`
         },
         download: {
+            questions: `${root}/questions-in-word/`,
             json: `${root}/download-game-to-json/`,
             word: `${root}/download-game-to-word/`,
             a: `${root}/download/`

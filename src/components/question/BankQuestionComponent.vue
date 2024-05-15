@@ -33,7 +33,7 @@
         </div>
         <div class="wrapper__list">
             <ul class="question__list">
-                <li v-if="questionList.length === 0">
+                <li style="width: 100%; margin: 2em auto;" v-if="questionList.length === 0">
                     Ничего не найдено
                 </li>
                 <li
@@ -66,7 +66,7 @@
                             <AttachmentIco v-if="item.media_data" class="btn" width="22" />
                         </div>
                         <div class="status__ico-item">
-                            <EditableIco class="btn" width="18" />
+                            <EditableIco class="btn" width="18" @click="handleEdit(item.id)" />
                         </div>
                         <div class="status__ico-item">
                             <DeleteBtn class="btn" @click="handleDelete(item)" width="18" />
@@ -92,6 +92,7 @@ import axios from 'axios'
 import { config } from '@/config'
 import type { ICategory } from '@/components/question/CategoryFormComponent.vue'
 import ButtonsBarComponent from "@/components/base/ButtonsBarComponent.vue";
+import {useRouter} from "vue-router";
 const store = useGameStore();
 const questionList = ref<IQuestion[]>([]);
 store.getQuestions().then((q)=> questionList.value = q)
@@ -107,27 +108,34 @@ const textType = computed(()=>{
     }
 })
 const isPhoto = ref(false);
-
-
-const selectedQuestions = ref<number[]>([])
+const router = useRouter();
+const selectedQuestions = defineModel<number[]>({default: []})
+//const selectedQuestions = ref<number[]>([])
 const addSelectedQuestions = async() => {
-    return 0;
-    // const question = [];
-    // await selectedQuestions.value.forEach((id)=>{
-    //     axios.get(config.urls.get.question + id + '/').then((res)=>{
-    //         if (res.status === 200){
-    //             res.data.
-    //             question.push(res.data)
-    //         }
-    //     })
-    // });
-    // store.currentRound.questions.push(question) ?? store.currentRound.question = question
+    await selectedQuestions.value.forEach((id)=>{
+        axios.get(config.urls.get.question + id + '/').then((res)=>{
+            if (res.status === 200){
+                try{
+                    store.currentQuestion = store.mapBIQuestionToIQuestions(res.data)[0]
+                    store.addCurrentQuestionToCurrentRound()
+                }catch (e) {
+                    console.error(e);
+                }
+                //res.data.question.push(res.data)
+            } else {
+                console.error(res.data)
+            }
+        })
+    });
+}
+const handleEdit = (id: number) => {
+    router.push(`/bank/new-question/${id}/`)
 }
 const searchText = ref<string>('')
-watch(searchText, async(newVal: string)=> {
-    if (newVal.length > 1) {
+watchEffect(async()=> {
+    if (searchText.value.length > 0) {
         store.searchQuestions({
-            question_text: newVal,
+            question_text: searchText.value,
             question_type: textType.value,
             isPhoto: isPhoto.value
         }).then((q) => {
@@ -271,11 +279,23 @@ ul {
     flex-direction: row;
     flex-wrap: wrap;
 }
-@media screen and (max-width: 500px) {
+:deep(.left){
+    flex-grow: 2;
+}
+:deep(.add){
+    width:100%;
+}
+:deep(.right){
+    flex-grow: 0;
+}
+@media screen and (max-width: 700px) {
     .options__bar {
         flex-direction: column;
         width: 80%;
         margin: 0 auto;
+    }
+    .option{
+        margin-top: 1em;
     }
 }
 </style>

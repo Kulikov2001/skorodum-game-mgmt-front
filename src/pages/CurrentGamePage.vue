@@ -5,9 +5,9 @@
     </div>
     <RoundComponent v-for="(item, key) in rounds" :key="key" :current-round="item" />
     <div class="btns">
-        <button-component @click="handleSaveGame" class="green">Сохранить игру</button-component>
-        <button-component @click="handleDownloadGame" style="float: right;"><span style="vertical-align: middle;display: inline-flex; flex-direction: row; align-items: center; gap: .5em;">Скачать <download-btn /></span></button-component>
-        <button-component @click="handleShareGame" style="float: right;">Поделиться</button-component>
+        <button-component @click="handleSaveGame" class="green currGamebtn">Сохранить игру</button-component>
+        <button-component class="currGamebtn" @click="handleDownloadGame" style="float: right;"><span style="vertical-align: middle;display: inline-flex; flex-direction: row; align-items: center; gap: .5em;">Скачать <download-btn /></span></button-component>
+        <button-component class="currGamebtn" @click="handleShareGame" style="float: right;">Поделиться</button-component>
     </div>
 </template>
 
@@ -75,5 +75,16 @@ onUnmounted(() => {
 }
 .name__wrapper h1{
     font-weight: 600;
+}
+.btns{
+    @media screen and (max-width: 750px){
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+    }
+    .currGamebtn{
+        margin-top: 1em;
+    }
 }
 </style>

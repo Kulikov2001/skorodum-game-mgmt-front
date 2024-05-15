@@ -3,18 +3,20 @@
     <div class="wrapper">
         <article>
             <h2>Вопросы:</h2>
-            <BankQuestionComponent />
+            <BankQuestionComponent v-model="selectedQuestions" />
             <div class="bnk__btn-row">
                 <div class="bnk__btn">
                     <button>Создать раунд</button>
                     <div class="bnk__btn-desk">Создать раунд из выбранных вопросов</div>
                 </div>
-                <div class="bnk__btn">
-                    <div class="icon">
-                        <DocDown width="30" height="30" stroke="var(--main)" stroke-width="0.5" />
+                <a :href="selectedQuestions.length > 0 ? config.urls.download.questions + selectedQuestions.toString() + '/' : '#'">
+                    <div class="bnk__btn">
+                        <div class="icon">
+                            <DocDown width="30" height="30" stroke="var(--main)" stroke-width="0.5" />
+                        </div>
+                        <div class="bnk__btn-desk">Конвертировать в Word</div>
                     </div>
-                    <div class="bnk__btn-desk">Конвертировать в Word</div>
-                </div>
+                </a>
             </div>
         </article>
         <aside>
@@ -33,6 +35,10 @@ import CategoryFormComponent from '@/components/question/CategoryFormComponent.v
 import BankQuestionComponent from '@/components/question/BankQuestionComponent.vue'
 import AddCircleIn from '@/assets/AddCircleIn.vue'
 import DocDown from '@/assets/DocDown.vue'
+import {ref} from "vue";
+import axios from "axios";
+import {config} from "@/config";
+const selectedQuestions = ref<number[]>([]);
 </script>
 
 <style scoped>
@@ -129,6 +135,11 @@ aside :deep(.search-field) {
     }
 }
 @media screen and (max-width: 900px) {
+    :deep(.wrapper__list) {
+        width: 430px;
+    }
+}
+@media screen and (max-width: 500px) {
     .wrapper {
         width: auto;
     }

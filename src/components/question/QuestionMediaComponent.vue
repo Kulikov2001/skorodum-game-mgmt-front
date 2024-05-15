@@ -17,7 +17,7 @@
                 </p>
             </div>
             <div class="tab__content-item">
-                <h3 align="center">Медиа после вопроса</h3>
+                <h3 align="center" style="text-wrap: nowrap;">Медиа после вопроса</h3>
                 <FilePicker @uploaded="handleUploaded($data)" :role="{ position: 'after' }" />
                 <p class="desc" align="center">
                     Выберите медиа файл для демонстрации после вопроса
@@ -45,12 +45,15 @@
 
 <script setup lang="ts">
 import FilePicker from '@/components/base/FilePickerComponent.vue'
-import { ref } from 'vue'
+import {ref, watch} from 'vue'
 import {useGameStore} from "@/stores/game";
 const photoTabOpened = ref(false)
 const toggleTab = async (val: string) => {
     val === 'photo' ? (photoTabOpened.value = true) : (photoTabOpened.value = false)
 }
+watch(photoTabOpened, () => {
+    store.currentQuestion.media_data!.show_image = photoTabOpened.value;
+})
 const store = useGameStore();
 const handleUploaded = (data: any)=>{
     store.setCurrQMedia(data);
@@ -67,12 +70,18 @@ const emit = defineEmits<{
     display: grid;
     grid-template-columns: 1fr 1fr;
 }
+
 .tab__content-wrapper {
     z-index: 1;
     margin-top: -1em;
     display: grid;
     grid-template-columns: 1fr 1fr;
     background-color: white;
+}
+@media screen and (max-width: 500px){
+    .tab__content-wrapper {
+        grid-template-columns: 1fr;
+    }
 }
 .tab__content-item {
     background-color: white;

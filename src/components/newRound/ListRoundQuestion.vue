@@ -15,13 +15,13 @@
 import QuestionCard from '@/components/question/QuestionCardComponent.vue'
 import { useGameStore } from '@/stores/game'
 import type { IQuestion } from '@/stores/game'
-import { ref,watch } from 'vue'
+import {computed, ref, watch} from 'vue'
 const store = useGameStore()
-
-const roundQuestions = ref<IQuestion[]>(store.currentRound.questions ?? [])
-watch(store.currentRound.questions ?? [], (updatedQuestions) => {
-    roundQuestions.value = updatedQuestions
-})
+const roundQuestions = computed(()=> store.currentRound.questions??[])
+//const roundQuestions = ref<IQuestion[]>(store.currentRound.questions ?? [])
+// watch(store.currentRound.questions ?? [], (updatedQuestions) => {
+//     roundQuestions.value = updatedQuestions
+// })
 </script>
 
 <style scoped>

@@ -22,7 +22,8 @@ import { onMounted, ref } from 'vue'
 import { useGameStore} from '@/stores/game'
 import type {IRound} from '@/stores/game'
 import NotificationComponent from '@/components/base/NotificationComponent.vue'
-
+import {useRouter} from "vue-router";
+const router = useRouter();
 const store = useGameStore()
 const activeAccordionElem = ref<string[]>(['Создать', 'Банк'])
 const toggleAccordion = (val: string) => {
@@ -33,24 +34,11 @@ const toggleAccordion = (val: string) => {
     }
 }
 
-const handleSave = () => {
-    try {
-        store.currentGame.rounds = store.currentGame.rounds ?? []
-        const duplicate: number = store.currentGame.rounds.findIndex(round => round.settings.name === store.currentRound.settings.name)
-        if (duplicate !== -1) {
-            store.currentGame.rounds[duplicate] = store.currentRound
-        } else {
-            store.currentGame.rounds.push(store.currentRound)
-        }
-
-        store.globalNotification.message = 'Раунд добавлен в игру'
-        store.globalNotification.type = 'success'
-    } catch (e) {
-        store.globalNotification.message = 'Ошибка при добавлении в раунд'
-        store.globalNotification.type = 'error'
-    } finally {
-        store.globalNotification.isFixed = true
-        setTimeout(store.globalNotification.clear, 1500)
+const handleSave = async() => {
+    if (router.currentRoute.value.params.id){
+       await store.updateQuestion(parseInt(router.currentRoute.value.params.id[0]));
+    } else {
+       await store.createQuestion().then((res)=> console.log(res));
     }
 }
 const handleCancel = () => {

@@ -12,7 +12,7 @@
         <ol type="1" start="1">
             <li v-for="n in count" :key="n">
                 <span class="number">{{ n }}.</span>
-                <InputComponent class="question-field" v-model.lazy="answerText[n - 1]" />
+                <InputComponent class="question-field" v-model="answerText[n - 1]" />
                 <MyCheckboxComponent @tapped="handleCorrectClick(n-1)" :active="correctAnswer[n-1]" />
             </li>
         </ol>
@@ -42,7 +42,7 @@ import ButtonsBarComponent from '@/components/base/ButtonsBarComponent.vue'
 import CategoryFormComponent from '@/components/question/CategoryFormComponent.vue'
 import type {ICategory} from '@/components/question/CategoryFormComponent.vue'
 import InputComponent from '@/components/base/InputComponent.vue'
-import { ref, onMounted } from 'vue'
+import {ref, onMounted, computed, watch} from 'vue'
 import MyCheckboxComponent from '@/components/base/MyCheckboxComponent.vue'
 import { useGameStore } from '@/stores/game'
 import Vector4Answers from '@/assets/Vector4Answers.vue'
@@ -52,10 +52,18 @@ const count = ref<number>(4)
 const props = defineProps<{
     hideBtn?: boolean;
 }>();
-const hideBtn = ref<boolean>(props.hideBtn);
-const answerText = ref<string[]>([])
-const correctAnswer = ref<boolean[]>([false,false,false,false])
 const store = useGameStore()
+const hideBtn = ref<boolean>(props.hideBtn);
+const answerText = computed<string[]>({
+    get: () => {
+        return store.currentQuestion.answers??[]
+    },
+    set: (val: string[]) => {
+        store.currentQuestion.answers = val
+    }
+})
+//const answerText = ref<string[]>([])
+const correctAnswer = ref<boolean[]>([false,false,false,false])
 const categoryForm = ref<{
     selected: ICategory[]
     searchText: string
@@ -64,22 +72,23 @@ const categoryForm = ref<{
     searchText: ''
 })
 const handleCorrectClick = async(n: number) => {
+    for (let i = 0; i < count.value; i++){
+        correctAnswer.value[i] = false
+    }
     correctAnswer.value[n] === true ? correctAnswer.value[n] = false : correctAnswer.value[n] = true
+    if (store.currentQuestion.correct_answer){
+        store.currentQuestion.correct_answer = answerText.value[n];
+    }
 }
 onMounted(() => {
     if (store.currentQuestion.answers) {
-        count.value =
-            store.currentQuestion.answers.length < 4 ? 4 : store.currentQuestion.answers.length
-        answerText.value = store.currentQuestion.answers
-        correctAnswer.value = []
-        answerText.value.forEach((el) => {
-            if (el === store.currentQuestion.correct_answer) {
-                correctAnswer.value.push(true)
-            } else {
-                correctAnswer.value.push(false)
-            }
-        })
+        count.value = store.currentQuestion.answers.length < 4 ? 4 : store.currentQuestion.answers.length
     }
+})
+watch(()=> answerText.value, (newVal) => {
+    answerText.value.forEach((el,i) => {
+        correctAnswer.value[i] = el === store.currentQuestion.correct_answer;
+    })
 })
 function resetQuestion() {
     correctAnswer.value = []
@@ -109,6 +118,7 @@ const handleAddCategory = () => {
             })
     }
 }
+
 </script>
 
 <style scoped>

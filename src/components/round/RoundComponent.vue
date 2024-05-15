@@ -49,8 +49,8 @@
             :correct="item.correct_answer ?? ''"
         />
         <div class="btns">
-            <ButtonComponent @click="handleEditRound" class="green white-bg">Редактировать раунд</ButtonComponent>
-            <ButtonComponent @click="handleDeleteRound" class="red white-bg">Удалить раунд</ButtonComponent>
+            <ButtonComponent @click="handleEditRound" class="green white-bg rbtn">Редактировать раунд</ButtonComponent>
+            <ButtonComponent @click="handleDeleteRound" class="red white-bg rbtn">Удалить раунд</ButtonComponent>
         </div>
     </div>
 </template>
@@ -140,5 +140,8 @@ const handleDeleteRound = async()=>{
 .feature__item .number {
     color: black;
     font-weight: 700;
+}
+.rbtn{
+    margin: .33em;
 }
 </style>

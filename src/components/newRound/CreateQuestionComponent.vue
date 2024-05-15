@@ -23,7 +23,6 @@
                 @title-click="toggleAccordion('Закрытый')"
             ><!-- :is-open="activeAccordionElem.includes('Закрытый') ? true : false" -->
                 <ClosedQuestionComponent
-                    v-model="test"
                     :class="{ active: closedQuestionAccordioned }"
                     :hideBtn="hideBtn"
                 />
@@ -38,8 +37,8 @@ import AccordionItem from '@/components/Accordion/AccordionComponent.vue'
 import ClosedQuestionComponent from '@/components/question/ClosedQuestionComponent.vue'
 import OpenQuestionComponent from '@/components/question/OpenQuestionComponent.vue'
 import {ref, computed, watch, onMounted, onUnmounted} from 'vue'
-import { useGameStore } from '@/stores/game'
-const test = ref<any>(null)
+import { useGameStore} from '@/stores/game'
+import type {IQuestion} from '@/stores/game'
 const router = useRouter();
 const store = useGameStore()
 const props = defineProps<{
@@ -59,19 +58,7 @@ const handleUploaded = async(data: any) => {
 const hideBtn = ref<boolean>(props.hideBtn);
 import type { IMedia } from '@/stores/game'
 import {useRouter} from "vue-router";
-const qmedia: IMedia = {
-    id: 1,
-    show_image: true,
-    video: {
-        before: 'mybeforevide.mp4',
-        after: '0.mp4'
-    },
-    image: {
-        before: '',
-        after: '',
-        player_displayed: false
-    }
-}
+
 const closedQuestionAccordioned = ref<boolean>(true);
 const activeAccordionElem = ref<string[]>(['Закрытый'])
 const toggleAccordion = (val: string) => {
@@ -89,20 +76,23 @@ watch(closedQuestionAccordioned, (newVal: boolean) => {
         store.currentQuestion.type = 'text'
     }
 });
+
 onMounted(()=>{
-    let _id = router.currentRoute.value.params.id
-    switch (typeof _id) {
-        case 'string':
-            break
-        case 'object':
-            _id = _id[0]
-            break
+    store.clearQuestion()
+    if (router.currentRoute.value.params.id) {
+        let _id = router.currentRoute.value.params.id
+        switch (typeof _id) {
+            case 'string':
+                break
+            case 'object':
+                _id = _id[0]
+                break
+        }
+        let parsedId = parseInt(_id)
+        if (typeof parsedId === 'number') {
+            store.getQuestion(parsedId).then((res: IQuestion)=>{store.currentQuestion = res});
+        }
     }
-    let parsedId = parseInt(_id)
-    if (typeof parsedId === 'number') {
-        
-    }
-    store.currentQuestion.type = 'select';
 })
 onUnmounted(()=>{
     store.clearQuestion();

@@ -28,7 +28,10 @@ button[color] {
 button[color]:hover {
     box-shadow: 0 5px 10px var(--main);
 }
-a,
+a{
+    text-decoration: none;
+    color: unset;
+}
 .green {
     text-decoration: none;
     color: var(--color-underlay);
@@ -39,11 +42,11 @@ a,
     -ms-transition: 0.4s;
     -o-transition: 0.4s;
 }
-@media (hover: hover) {
-    a:hover {
-        background-color: hsla(160, 100%, 37%, 0.2);
-    }
-}
+/*@media (hover: hover) {*/
+/*    a:hover {*/
+/*        background-color: hsla(160, 100%, 37%, 0.2);*/
+/*    }*/
+/*}*/
 
 /* @media (min-width: 1024px) {
     body {

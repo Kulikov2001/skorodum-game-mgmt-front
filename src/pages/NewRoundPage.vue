@@ -56,22 +56,30 @@ const toggleAccordion = (val: string) => {
     }
 }
 
-const handleSave = () => {
-    try {
-        store.currentGame.rounds = store.currentGame.rounds ?? []
-        const duplicate: number = store.currentGame.rounds.findIndex(round => round.settings.name === store.currentRound.settings.name)
-        if (duplicate !== -1) {
-            store.currentGame.rounds[duplicate] = store.currentRound
-        } else {
-            store.currentGame.rounds.push(store.currentRound)
-        }
+const handleSave = async() => {
+    const validate = await store.validateRound();
+    if (validate.status) {
+        try {
+            store.currentGame.rounds = store.currentGame.rounds ?? []
+            const duplicate: number = store.currentGame.rounds.findIndex(round => round.settings.name === store.currentRound.settings.name)
+            if (duplicate !== -1) {
+                store.currentGame.rounds[duplicate] = store.currentRound
+            } else {
+                store.currentGame.rounds.push(store.currentRound)
+            }
 
-        store.globalNotification.message = 'Раунд добавлен в игру'
-        store.globalNotification.type = 'success'
-    } catch (e) {
-        store.globalNotification.message = 'Ошибка при добавлении в раунд'
-        store.globalNotification.type = 'error'
-    } finally {
+            store.globalNotification.message = 'Раунд добавлен в игру'
+            store.globalNotification.type = 'success'
+        } catch (e) {
+            store.globalNotification.message = 'Ошибка при добавлении в раунд'
+            store.globalNotification.type = 'error'
+        } finally {
+            store.globalNotification.isFixed = true
+            setTimeout(store.globalNotification.clear, 1500)
+        }
+    } else {
+        store.globalNotification.message = validate.message;
+        store.globalNotification.type = 'error';
         store.globalNotification.isFixed = true
         setTimeout(store.globalNotification.clear, 1500)
     }
@@ -82,6 +90,15 @@ const handleReset = () => {
 }
 </script>
 <style scoped>
+@media screen and (max-width:1100px){
+    :deep(.row.buttonsbar){
+        flex-direction: column;
+    }
+    :deep(.buttonsbar .left){
+
+    }
+}
+
 .bigelem {
     margin: 1em auto;
 }

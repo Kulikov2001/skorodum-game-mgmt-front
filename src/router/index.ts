@@ -81,7 +81,12 @@ const router = createRouter({
                 {
                     path: '/bank/new-question',
                     name: 'Создание вопроса',
-                    component: () => import('@/pages/NewQuestionPage.vue')
+                    component: () => import('@/pages/NewQuestionPage.vue'),
+                },
+                {
+                    path: '/bank/new-question/:id',
+                    name: 'Конкретный вопрос',
+                    component: () => import('@/pages/NewQuestionPage.vue'),
                 }
             ]
         }

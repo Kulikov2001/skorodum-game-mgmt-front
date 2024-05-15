@@ -44,6 +44,7 @@ const handleFileUpload = (event: Event) => {
         };
         reader.readAsText(file);
     }
+    submitFile();
 };
 </script>
 
@@ -58,7 +59,7 @@ const handleFileUpload = (event: Event) => {
             ref="fileInput"
             @change="handleFileUpload"
         />
-        <button @click="submitFile">Импортировать</button>
+        <!--button @click="submitFile">Импортировать</button-->
     </div>
 </template>
 
@@ -67,9 +68,9 @@ const handleFileUpload = (event: Event) => {
     padding: 1em;
     background: var(--bg-darker);
     border-radius: 1em;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    display: flex;
     align-items: center;
+    justify-content: space-between;
     margin: 1em auto;
 }
 .upload__wrapper > button, ::file-selector-button{
@@ -78,5 +79,16 @@ const handleFileUpload = (event: Event) => {
     border: 0;
     border-radius: 1em;
     padding: 1em 2em;
+}
+input > span {
+    display: none;
+}
+label{
+    flex-grow: 3;
+    flex-shrink: 1;
+}
+input{
+    flex-grow: 1;
+    flex-shrink: 3;
 }
 </style>

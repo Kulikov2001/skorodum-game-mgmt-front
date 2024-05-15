@@ -1,10 +1,10 @@
 <template>
-    <div class="row">
+    <div class="row buttonsbar">
         <div class="left">
             <button v-if="props.back" @click="emit('Back')" class="back">&larr; Назад</button>
             <button v-if="props.save" @click="emit('Save')" class="save">Сохранить</button>
             <button v-if="props.reset" @click="emit('Reset')" class="reset">
-                <ResetIco width="18" height="18" /> Сброс к изначальным настройка
+                <ResetIco width="18" height="18" /> Сброс к изначальным настройкам
             </button>
             <button v-if="props.add" @click="emit('Add')" class="add">Добавить</button>
             <button v-if="props.cancel" @click="emit('Cancel')" class="cancel">Отмена</button>
