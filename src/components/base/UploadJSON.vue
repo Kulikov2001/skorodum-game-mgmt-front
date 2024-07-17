@@ -39,7 +39,9 @@ const handleFileUpload = (event: Event) => {
         const reader = new FileReader();
         reader.onload = () => {
             if (typeof reader.result === 'string') {
-                jsonData.value = JSON.parse(reader.result);
+                const parsedJSON = JSON.parse(reader.result);
+                jsonData.value = { "game": parsedJSON};
+
             }
         };
         reader.readAsText(file);
@@ -59,7 +61,7 @@ const handleFileUpload = (event: Event) => {
             ref="fileInput"
             @change="handleFileUpload"
         />
-        <!--button @click="submitFile">Импортировать</button-->
+        <button @click="submitFile">Импортировать</button>
     </div>
 </template>
 

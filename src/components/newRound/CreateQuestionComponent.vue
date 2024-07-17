@@ -106,6 +106,7 @@ onUnmounted(()=>{
 .wrapper {
     transition: max-height 2s ease;
     overflow: hidden;
+    padding: 1em;
 }
 .wrapper:not(.active) {
     max-height: 0;

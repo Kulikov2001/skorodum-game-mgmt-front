@@ -132,12 +132,17 @@
 import RadioGroup from '@/components/base/RadioGroup.vue'
 import FeatureComponent from '@/components/newRound/FeatureComponent.vue'
 import InputComponent from '@/components/base/InputComponent.vue'
-import { computed, ref } from 'vue'
+import {computed, onMounted, ref} from 'vue'
 import { useGameStore } from '@/stores/game'
-
+import {useRouter} from "vue-router";
+const router = useRouter();
 //TODO: store или store определиться уже
 const store = useGameStore()
-
+onMounted(()=>{
+    if (router.currentRoute.value.params.id){
+//TODO: Сделать при передачи раунда заполнять
+    }
+})
 const remove_answer = computed({
     get: () => {
         if (

@@ -33,11 +33,17 @@ function isOn(_page: string[]): boolean {
     display: inline-flex;
     justify-content: center;
     width: 100%;
+    scale: .9;
 }
 .mainBtn-item {
     margin: 0 1em;
-    width: 6em;
-    height: auto;
+    width: 115px;
+    height: 115px;
     cursor: pointer;
+}
+@media screen and (min-width: 400px){
+    .mainBtn-item{
+        width: calc(100vw/3);
+    }
 }
 </style>

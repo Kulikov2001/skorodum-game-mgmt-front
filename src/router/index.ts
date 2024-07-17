@@ -27,7 +27,13 @@ const router = createRouter({
                     name: 'Новый раунд',
                     meta: { title: 'Скородум', transition: 'slide-left' },
                     component: () => import('@/pages/NewRoundPage.vue')
-                }
+                },
+                {
+                    path: '/new/round/:id',
+                    name: 'Конкретный раунд',
+                    meta: { title: 'Скородум', transition: 'slide-left' },
+                    component: () => import('@/pages/NewRoundPage.vue')
+                },
             ]
         },
         {

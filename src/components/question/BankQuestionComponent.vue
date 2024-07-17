@@ -66,7 +66,7 @@
                             <AttachmentIco v-if="item.media_data" class="btn" width="22" />
                         </div>
                         <div class="status__ico-item">
-                            <EditableIco class="btn" width="18" @click="handleEdit(item.id)" />
+                            <EditableIco class="btn" width="18" @click="handleEdit(item.id!)" />
                         </div>
                         <div class="status__ico-item">
                             <DeleteBtn class="btn" @click="handleDelete(item)" width="18" />
@@ -161,6 +161,9 @@ const handleCheckboxClick = async(triggered: IQuestion) => {
     } else {
         if (typeof triggered.id === 'number') {
             selectedQuestions.value.push(triggered.id);
+            console.log(selectedQuestions.value)
+        } else {
+            console.error(`non number, ${typeof(triggered.id)}`);
         }
     }
 }

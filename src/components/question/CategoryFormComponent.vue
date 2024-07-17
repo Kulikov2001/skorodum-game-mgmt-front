@@ -68,6 +68,13 @@ const handleChange = async () => {
 }
 onMounted(() => {
     categoryFormModel.value.selected = store.getQuestionCategories()
+    axios
+        .get(config.urls.get.all.categories)
+        .then(function (res) {
+            if (res.status === 200) {
+                searchResult.value = res.data
+            }
+        })
 })
 </script>
 

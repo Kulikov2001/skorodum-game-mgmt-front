@@ -13,15 +13,24 @@
             Номер правильного ответа:
             <span class="correct__answer-num">{{ props.answers.indexOf(props.correct) + 1 }}</span>
         </p>
+        <DeleteBtn style="position:absolute; right:10px;top:10px;" @click="handleDeleteBtn" />
     </div>
 </template>
 
 <script setup lang="ts">
+import DeleteBtn from "@/assets/DeleteBtn.vue";
+import {useGameStore} from "@/stores/game";
+
+const store = useGameStore();
+
 const props = defineProps<{
     title: string
     answers: string[]
     correct: string
 }>()
+const handleDeleteBtn = async() => {
+   store.currentRound.questions = store.currentRound.questions.filter(q => q.question!== props.title);
+}
 </script>
 
 <style scoped>
@@ -55,6 +64,7 @@ li:before {
     border-radius: 2em;
     border: 1px solid #d4d4d4;
     margin: 1.5em auto;
+    position: relative;
 }
 .correct__answer-text {
     font-weight: 700;

@@ -45,6 +45,9 @@ import BankQuestionComponent from '@/components/question/BankQuestionComponent.v
 import { useGameStore} from '@/stores/game'
 import type {IRound} from '@/stores/game'
 import NotificationComponent from '@/components/base/NotificationComponent.vue'
+import {useRouter} from "vue-router";
+import axios from "axios";
+import {config} from "@/config";
 
 const store = useGameStore()
 const activeAccordionElem = ref<string[]>(['Создать', 'Банк'])
@@ -55,10 +58,20 @@ const toggleAccordion = (val: string) => {
         activeAccordionElem.value.push(val)
     }
 }
-
+const router = useRouter();
 const handleSave = async() => {
     const validate = await store.validateRound();
     if (validate.status) {
+        if (router.currentRoute.value.params.id){
+            const res = await axios.put(config.urls.update.round + parseInt(router.currentRoute.value.params.id[0]) + '/');
+            if (res.status === 200){
+                store.globalNotification.message = 'Раунд успешно обновлен'
+                store.globalNotification.type = 'success'
+            } else {
+                store.globalNotification.message = 'Ошибка обновления раунда'
+                store.globalNotification.type = 'error'
+            }
+        }else {
         try {
             store.currentGame.rounds = store.currentGame.rounds ?? []
             const duplicate: number = store.currentGame.rounds.findIndex(round => round.settings.name === store.currentRound.settings.name)
@@ -77,7 +90,7 @@ const handleSave = async() => {
             store.globalNotification.isFixed = true
             setTimeout(store.globalNotification.clear, 1500)
         }
-    } else {
+    }} else {
         store.globalNotification.message = validate.message;
         store.globalNotification.type = 'error';
         store.globalNotification.isFixed = true

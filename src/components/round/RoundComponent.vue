@@ -71,8 +71,8 @@ const props = defineProps<{
     currentRound: IRound
 }>()
 const handleEditRound = async()=>{
-    router.push('/new/round');
     store.editRound(props.currentRound)
+    router.push(`/new/round/${store.currentRound.id ?? ''}`);
 }
 const handleDeleteRound = async()=>{
     store.deleteRound(props.currentRound.id!)
