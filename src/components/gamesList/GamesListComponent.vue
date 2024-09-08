@@ -50,12 +50,28 @@ const handleWordBtn = async(_id: number) => {
 const handleDownloadBtn = async (_id: number) => {
     store.downloadGame(_id)
 }
-const handleDeleteBtn = (_id: number) => {
-     store.deleteGame(_id)
-     store.getGamesNames()
+const handleDeleteBtn = async(_id: number) => {
+     await store.deleteGame(_id)
 }
 const handleShareBtn = async (_id: number) => {
-    alert('Действие зарезервировано')
+    const shareData = {
+        title: `Делюсь с вами сценарием Скородум`,
+        text: "Взгляните на этот сценарий для Скородум!",
+        url: `${window.location.href + '/' + _id}`,
+    };
+    try {
+        await navigator.share(shareData);
+    } catch (e) {
+        try {
+            navigator.clipboard.writeText(window.location.href + '/' + _id).then(()=>{
+                store.globalNotification.message = 'Ссылка на игру скопирована!'
+                store.globalNotification.type = 'success'
+            });
+        }
+        catch (e) {
+            console.error('error while copying')
+        }
+    }
 }
 const handleRowClick = async (_id: number) => {
     router.push('/games/' + _id + '/')
@@ -70,8 +86,12 @@ const handleRowClick = async (_id: number) => {
     justify-content: space-between;
 }
 .list__item {
+
     padding: 1em;
     color: black;
+}
+.list__info{
+    cursor:pointer;
 }
 .date {
     color: var(--text-darker);

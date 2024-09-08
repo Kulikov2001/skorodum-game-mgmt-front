@@ -101,7 +101,7 @@ const handleAddQuestion = () => {
     store.currentQuestion.answers = answerText.value
     store.currentQuestion.correct_answer = answerText.value[correctAnswer.value.indexOf(true)]
     store.addCurrentQuestionToCurrentRound()
-    resetQuestion()
+    //resetQuestion()
 }
 const handleAddCategory = () => {
     if (categoryForm.value!.searchText.length > 2) {

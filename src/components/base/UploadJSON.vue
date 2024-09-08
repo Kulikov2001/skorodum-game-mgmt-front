@@ -2,7 +2,10 @@
 import {ref} from "vue";
 import axios from "axios";
 import {config} from "@/config";
+import {useGameStore} from "@/stores/game";
 
+
+const store = useGameStore();
 const emit = defineEmits<{
     (e: 'reloadrequired'): void
 }>();
@@ -27,8 +30,16 @@ const submitFile = async () => {
         });
         console.log('SUCCESS!!', response);
         emit('reloadrequired')
+        store.globalNotification.type = "success"
+        store.globalNotification.isFixed = false;
+        store.globalNotification.message = "Игра успешно импортирована"
+        setTimeout(store.globalNotification.clear, 5000);
     } catch (error) {
         console.error('FAILURE!!', error);
+        store.globalNotification.type = "error"
+        store.globalNotification.isFixed = false;
+        store.globalNotification.message = "Ошибка при импорте игры. Убедитесь в валидности файла"
+        setTimeout(store.globalNotification.clear, 5000);
     }
 };
 
@@ -39,14 +50,14 @@ const handleFileUpload = (event: Event) => {
         const reader = new FileReader();
         reader.onload = () => {
             if (typeof reader.result === 'string') {
-                const parsedJSON = JSON.parse(reader.result);
-                jsonData.value = { "game": parsedJSON};
-
+                jsonData.value = JSON.parse(reader.result);
+            } else {
+                alert(typeof(reader.result));
             }
         };
         reader.readAsText(file);
     }
-    submitFile();
+    //submitFile();
 };
 </script>
 

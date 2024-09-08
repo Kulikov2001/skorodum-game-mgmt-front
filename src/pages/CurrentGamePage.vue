@@ -15,10 +15,11 @@
 import RoundComponent from '@/components/round/RoundComponent.vue'
 import { useGameStore } from '@/stores/game'
 import { computed, onMounted, onUnmounted } from 'vue'
-import { useRouter } from 'vue-router'
+import {useRoute, useRouter} from 'vue-router'
 import ButtonComponent from "@/components/base/ButtonComponent.vue";
 import DownloadBtn from "@/assets/DownloadBtn.vue";
 const router = useRouter()
+const route = useRoute();
 const store = useGameStore()
 const title = computed(() => {
     return store.currentGame.game_info.name ?? 'Без названия'
@@ -33,18 +34,26 @@ const handleSaveGame = () => {
 
 }
 const handleDownloadGame = () => {
-
+    store.downloadGame(route.params.id)
 }
 const handleShareGame = async() => {
     const shareData = {
-        title: `${store.currentGame.game_info.name}`,
-        text: "Посмотри мой сценарий скородум!",
-        url: `${window.location.href}`,
+        title: `Делюсь с вами сценарием Скородум`,
+        text: "Взгляните на этот сценарий для Скородум!",
+        url: `${window.location.href + '/' + route.params.id}`,
     };
     try {
         await navigator.share(shareData);
     } catch (e) {
-        console.error(e);
+        try {
+            navigator.clipboard.writeText(window.location.href + '/' + route.params.id).then(()=>{
+                store.globalNotification.message = 'Ссылка на игру скопирована!'
+                store.globalNotification.type = 'success'
+            });
+        }
+        catch (e) {
+            console.error('error while copying')
+        }
     }
 }
 onMounted(() => {

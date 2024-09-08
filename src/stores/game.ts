@@ -228,7 +228,7 @@ export const useGameStore = defineStore('game', () => {
             if (currentGame.value.rounds[0].questions && currentGame.value.rounds[0].questions.length > 0) {
                 if (currentGame.value.rounds[0].questions[0].answers && currentGame.value.rounds[0].questions[0].answers.length > 0) {
                     if (currentGame.value.game_info.name.length > 0 ){
-                        result.status = true;
+                    result.status = true;
                         result.message = 'Валидация выполнена';
                     } else { result.message = 'Не заполнено имя игры';}
                 } else {result.message = 'Не заполнены ответы';}
@@ -241,12 +241,12 @@ export const useGameStore = defineStore('game', () => {
         if (currentRound.value.type.length > 0) {
             if (currentRound.value.settings.name.length > 0) {
                 if (currentRound.value.questions && currentRound.value.questions.length > 0) {
-                    if (currentRound.value.questions[0].question.length > 0) {
+                   // if (currentRound.value.questions[0].question.length > 0) {
                         if (currentRound.value.questions[0].answers && currentRound.value.questions[0].answers.length > 0) {
                             result.status = true;
                             result.message = 'Валидация выполнена';
                         } else {result.message = 'Не заполнены ответы';}
-                    } else {result.message = 'Не заполнен вопрос';}
+                  //  } else {result.message = 'Не заполнен вопрос';}
                 } else {result.message = 'Нет ни одного вопроса';}
             } else {result.message = 'Не заполнено название раунда';}
         } else { result.message = 'Не заполнен тип раунда';}
@@ -467,8 +467,10 @@ export const useGameStore = defineStore('game', () => {
             .delete(config.urls.delete.game + _id + '/')
             .then(function (res) {
                 if (res.status < 300) {
-                    globalNotification.value.message = 'Игра удалена'
-                    globalNotification.value.type = 'success'
+                    getGamesNames().then(()=>{
+                        globalNotification.value.message = 'Игра удалена'
+                        globalNotification.value.type = 'success'
+                    })
                 }
             })
             .catch(function (error) {

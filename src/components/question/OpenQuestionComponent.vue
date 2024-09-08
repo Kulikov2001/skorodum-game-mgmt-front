@@ -1,6 +1,6 @@
 <template>
     <div class="wrapper">
-        <textarea v-model="textarea"></textarea>
+        <textarea placeholder="Введите правильный ответ на открытый вопрос..." v-model="textarea"></textarea>
         <buttons-bar-component v-if="!hideBtn" :add="true" @add="handleSave"/>
     </div>
 
@@ -40,12 +40,18 @@ textarea{
 
 import {ref} from "vue";
 import ButtonsBarComponent from "@/components/base/ButtonsBarComponent.vue";
+import {useGameStore} from "@/stores/game";
 const props = defineProps<{
     hideBtn?: boolean;
 }>();
-const textarea = ref('asdasd');
+const store = useGameStore();
+const textarea = ref('');
 const hideBtn = ref<boolean>(props.hideBtn);
-const handleSave = async()=>{
-    alert('Действие зарезервировано')
+const handleSave = ()=>{
+    store.currentQuestion.type = 'text'
+    store.currentQuestion.correct_answer = textarea.value
+    store.currentQuestion.answers = [];
+    store.addCurrentQuestionToCurrentRound()
+   //store.clearQuestion();
 }
 </script>
